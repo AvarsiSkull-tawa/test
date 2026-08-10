@@ -48626,7 +48626,7 @@ var init_flea = __esm({
 });
 
 // src/cooking.js
-function patchGameCore() {
+function patchGameMechanics() {
   if (_cookingPatched) return;
   _cookingPatched = true;
   let charCode = 200;
@@ -48641,8 +48641,7 @@ function patchGameCore() {
     const mappedMatrix = matrix.map((row) => {
       let newRow = "";
       for (let x2 = 0; x2 < row.length; x2++) {
-        const ch = row[x2];
-        newRow += ch === "." ? "." : charMap[ch] || ".";
+        newRow += row[x2] === "." ? "." : charMap[row[x2]] || ".";
       }
       return newRow;
     });
@@ -48652,13 +48651,107 @@ function patchGameCore() {
   for (const [id, recipe] of Object.entries(COOKING_RECIPES)) {
     const foodKey = `food_${id}`;
     if (!CROPS[foodKey]) {
-      CROPS[foodKey] = {
-        name: recipe.name,
-        desc: recipe.desc,
-        sell: recipe.sellPrice,
-        sp: foodKey
-      };
+      CROPS[foodKey] = { name: recipe.name, desc: recipe.desc, sell: recipe.sellPrice, sp: foodKey };
     }
+  }
+  setInterval(() => {
+    const buffs = getActiveCookingBuffs();
+    if (buffs.length === 0) return;
+    const speedBuffs = buffs.filter((b2) => b2.type === "crop_speed");
+    if (speedBuffs.length > 0 && ctx.S && ctx.S.plots) {
+      [1, 2, 3].forEach((pg) => {
+        const plots = pg === 2 ? ctx.S.plots2 : pg === 3 ? ctx.S.plots3 : ctx.S.plots;
+        if (!plots) return;
+        const validBuff = speedBuffs.find((b2) => b2.zone === pg || b2.zone === 0);
+        if (!validBuff) return;
+        plots.forEach((p2) => {
+          const c2 = p2.crop;
+          if (c2 && !c2._cookSpeedApplied) {
+            const left = c2.matureAt - now();
+            if (left > 0) {
+              c2.matureAt = now() + Math.floor(left * validBuff.val);
+              c2._cookSpeedApplied = true;
+            }
+          }
+        });
+      });
+    }
+    if (runState && runState.pets) {
+      runState.pets.forEach((p2) => {
+        if (!p2._cookBuffApplied) {
+          let hpM = 1, atkM = 1, spdM = 1, addCrit = 0, addDodge = 0;
+          buffs.forEach((b2) => {
+            if (b2.type === "hero_hp") hpM += b2.val;
+            if (b2.type === "hero_atk") atkM += b2.val;
+            if (b2.type === "hero_speed") spdM += b2.val;
+            if (b2.type === "hero_crit") addCrit += b2.val;
+            if (b2.type === "hero_dodge") addDodge += b2.val;
+            if (b2.type === "hero_stats_boost") {
+              atkM += b2.atkVal - 1;
+              hpM += b2.hpVal - 1;
+            }
+          });
+          if (hpM !== 1) {
+            p2.maxHp = Math.floor(p2.maxHp * hpM);
+            p2.hp = p2.maxHp;
+          }
+          if (atkM !== 1) {
+            p2.atk = Math.floor(p2.atk * atkM);
+          }
+          if (spdM !== 1) {
+            p2.maxCd = p2.maxCd / spdM;
+            p2.cd = p2.maxCd;
+          }
+          if (addCrit > 0) {
+            p2.crit += addCrit;
+          }
+          if (addDodge > 0) {
+            p2.dodge += addDodge;
+          }
+          p2._cookBuffApplied = true;
+          const shadowRoot2 = document.querySelector("#star-tavern-farm-root")?.shadowRoot;
+          const pEl = shadowRoot2?.querySelector("#hpet-" + runState.pets.indexOf(p2));
+          if (pEl) {
+            const fl = document.createElement("div");
+            fl.className = "dmg-float buff";
+            fl.textContent = "YUMMY BUFF!";
+            fl.style.color = "#ff88dd";
+            fl.style.left = "-10px";
+            fl.style.bottom = "40px";
+            fl.style.animation = "dDrop 1.2s forwards";
+            pEl.appendChild(fl);
+            setTimeout(() => fl.remove(), 1e3);
+          }
+        }
+      });
+    }
+  }, 1e3);
+  const shadowRoot = document.querySelector("#star-tavern-farm-root")?.shadowRoot;
+  if (shadowRoot && !_sellEventAttached) {
+    _sellEventAttached = true;
+    shadowRoot.addEventListener("click", (e2) => {
+      const target = (
+        /** @type {Element} */
+        e2.target
+      );
+      const sellBtn = target.closest("#sellGo, #sellSelGo, #sellSeedGo");
+      if (sellBtn) {
+        const sellBuff = getActiveCookingBuffs().find((b2) => b2.type === "sell_price_boost");
+        if (sellBuff) {
+          const coinsBefore = ctx.S.coins;
+          setTimeout(() => {
+            const gain = ctx.S.coins - coinsBefore;
+            if (gain > 0) {
+              const bonus = Math.floor(gain * (sellBuff.val - 1));
+              ctx.S.coins += bonus;
+              save();
+              renderStatus();
+              toast(`\u{1F372} Gia V\u1ECB B\xED Truy\u1EC1n: Nh\u1EADn th\xEAm +${bonus.toLocaleString()} G!`);
+            }
+          }, 50);
+        }
+      }
+    }, true);
   }
 }
 function initCookingState() {
@@ -48667,6 +48760,7 @@ function initCookingState() {
   }
   if (!ctx.S.cooking.unlockedRecipes) ctx.S.cooking.unlockedRecipes = ["salad_cherry"];
   if (!ctx.S.cooking.activeBuffs) ctx.S.cooking.activeBuffs = [];
+  if (ctx.S.cooking.chefExp === "MAX") ctx.S.cooking.chefLevel = 10;
 }
 function getActiveCookingBuffs() {
   initCookingState();
@@ -48674,12 +48768,39 @@ function getActiveCookingBuffs() {
   ctx.S.cooking.activeBuffs = ctx.S.cooking.activeBuffs.filter((b2) => b2.expiresAt > nowMs);
   return ctx.S.cooking.activeBuffs;
 }
+function processChefExp(expGain, dishName) {
+  if (ctx.S.cooking.chefLevel >= 10) {
+    ctx.S.cooking.chefExp = "MAX";
+    toast(`\u{1F373} N\u1EA5u xu\u1EA5t s\u1EAFc m\xF3n ${dishName}! (\u0110\xE3 \u0111\u1EA1t M\u1EE9c \u0110\u1ED9 B\u1EBFp Tr\u01B0\u1EDFng MAX)`);
+    return;
+  }
+  ctx.S.cooking.chefExp += expGain;
+  let levelUpCount = 0;
+  while (ctx.S.cooking.chefLevel < 10) {
+    const reqExp = ctx.S.cooking.chefLevel * 100;
+    if (ctx.S.cooking.chefExp >= reqExp) {
+      ctx.S.cooking.chefExp -= reqExp;
+      ctx.S.cooking.chefLevel++;
+      levelUpCount++;
+    } else {
+      break;
+    }
+  }
+  if (ctx.S.cooking.chefLevel >= 10) {
+    ctx.S.cooking.chefLevel = 10;
+    ctx.S.cooking.chefExp = "MAX";
+  }
+  if (levelUpCount > 0) {
+    toast(`\u{1F389} B\xD9M! Tr\xECnh \u0111\u1ED9 th\u0103ng ti\u1EBFn l\xEAn \u0110\u1EA7u B\u1EBFp Lv.${ctx.S.cooking.chefLevel}!`);
+  } else {
+    toast(`\u{1F373} N\u1EA5u xu\u1EA5t s\u1EAFc m\xF3n ${dishName}! (+${expGain} EXP)`);
+  }
+}
 function canCookRecipe(recipeId) {
   const recipe = COOKING_RECIPES[recipeId];
   if (!recipe) return false;
   for (const [ingId, reqAmount] of Object.entries(recipe.ingredients)) {
-    const bagAmount = ctx.S.bag[ingId] || 0;
-    if (bagAmount < reqAmount) return false;
+    if ((ctx.S.bag[ingId] || 0) < reqAmount) return false;
   }
   return true;
 }
@@ -48687,9 +48808,7 @@ function cookRecipe(recipeId) {
   initCookingState();
   const recipe = COOKING_RECIPES[recipeId];
   if (!recipe) return toast("C\xF4ng th\u1EE9c kh\xF4ng t\u1ED3n t\u1EA1i!");
-  if (ctx.S.cooking.chefLevel < recipe.reqLevel) {
-    return toast(`C\u1EA7n c\u1EA5p \u0110\u1EA7u B\u1EBFp Lv.${recipe.reqLevel} \u0111\u1EC3 n\u1EA5u m\xF3n n\xE0y!`);
-  }
+  if (ctx.S.cooking.chefLevel < recipe.reqLevel) return toast(`C\u1EA7n \u0110\u1EA7u B\u1EBFp Lv.${recipe.reqLevel} \u0111\u1EC3 n\u1EA5u m\xF3n n\xE0y!`);
   if (!canCookRecipe(recipeId)) return toast("Thi\u1EBFu nguy\xEAn li\u1EC7u trong Balo!");
   for (const [ingId, reqAmount] of Object.entries(recipe.ingredients)) {
     ctx.S.bag[ingId] -= reqAmount;
@@ -48697,16 +48816,7 @@ function cookRecipe(recipeId) {
   }
   const foodKey = `food_${recipeId}`;
   ctx.S.bag[foodKey] = (ctx.S.bag[foodKey] || 0) + 1;
-  const expGain = recipe.cookTime * 10;
-  ctx.S.cooking.chefExp += expGain;
-  const reqExp = ctx.S.cooking.chefLevel * 100;
-  if (ctx.S.cooking.chefExp >= reqExp && ctx.S.cooking.chefLevel < 10) {
-    ctx.S.cooking.chefLevel++;
-    ctx.S.cooking.chefExp -= reqExp;
-    toast(`\u{1F389} CH\xDAC M\u1EEANG! Th\u0103ng c\u1EA5p \u0110\u1EA7u B\u1EBFp l\xEAn Lv.${ctx.S.cooking.chefLevel}!`);
-  } else {
-    toast(`\u{1F373} \u0110\xE3 n\u1EA5u th\xE0nh c\xF4ng ${recipe.name}! (+${expGain} EXP)`);
-  }
+  processChefExp(recipe.cookTime * 10, recipe.name);
   save();
   renderStatus();
   openKitchenModal();
@@ -48742,15 +48852,13 @@ function cookFreeFusion(ingredientList) {
     if (!ctx.S.cooking.unlockedRecipes.includes(matchedRecipeId)) {
       ctx.S.cooking.unlockedRecipes.push(matchedRecipeId);
       toast(`\u{1F31F} K\u1EF2 T\xCDCH! Kh\xE1m ph\xE1 \u0111\u01B0\u1EE3c c\xF4ng th\u1EE9c m\u1EDBi: ${recipe.name}!`);
-    } else {
-      toast(`\u2728 S\xE1ng t\u1EA1o th\xE0nh c\xF4ng: ${recipe.name}!`);
     }
-    ctx.S.cooking.chefExp += recipe.cookTime * 15;
+    processChefExp(recipe.cookTime * 15, `S\xE1ng t\u1EA1o ${recipe.name}`);
   } else {
     const foodKey = `food_failed_dish`;
     ctx.S.bag[foodKey] = (ctx.S.bag[foodKey] || 0) + 1;
     toast(`\u{1F4A9} N\u1EA5u h\u1ECFng r\u1ED3i! Th\u1EE9c \u0102n D\u1ECB D\u1EA1ng \u0111\xE3 ra l\xF2...`);
-    ctx.S.cooking.chefExp += 5;
+    processChefExp(5, "Th\u1EE9c \u0102n D\u1ECB D\u1EA1ng");
   }
   save();
   renderStatus();
@@ -48774,6 +48882,18 @@ function eatDish(foodKey) {
     } else {
       toast(`\u{1F49A} M\xF3n \u0103n qu\xE1 b\u1ED5 d\u01B0\u1EE1ng! Th\u1EC3 l\u1EF1c c\u0103ng tr\xE0n.`);
     }
+  } else if (buff.type === "rp_story_boost") {
+    if (setTakeoutNote && updateInjection) {
+      let currentNotes = takeoutNote || [];
+      currentNotes = currentNotes.filter((t2) => now() < t2.until);
+      currentNotes.push({
+        txt: `User v\u1EEBa \u0103n tr\u1ECDn b\xE1t ${recipe.name}! C\u01A1 th\u1EC3 User t\u1ECFa ra linh kh\xED ti\xEAn thi\xEAn, tinh th\u1EA7n s\u1EA3ng kho\xE1i v\xE0 c\u1EF1c k\u1EF3 h\u01B0ng ph\u1EA5n. S\u1EF1 vi\u1EC7c n\xE0y s\u1EBD \u1EA3nh h\u01B0\u1EDFng t\u1ED1t t\u1EDBi d\xF2ng c\xE2u chuy\u1EC7n ti\u1EBFp theo!`,
+        until: now() + buff.durationMs
+      });
+      setTakeoutNote(currentNotes);
+      updateInjection();
+    }
+    toast(`\u{1F35C} Th\u1EA7n kh\xED nh\u1EADp th\u1EC3! \u0110\u1ED1i t\xE1c Chat AI s\u1EBD nh\u1EADn ra b\u1EA1n v\u1EEBa th\u0103ng hoa.`);
   } else if (buff.type !== "none") {
     const expiresAt = now() + buff.durationMs;
     ctx.S.cooking.activeBuffs.push({
@@ -48787,9 +48907,9 @@ function eatDish(foodKey) {
       desc: buff.desc,
       expiresAt
     });
-    toast(`\u{1F60B} Nh\xF3p nh\xE9p! K\xEDch ho\u1EA1t Buff: ${buff.desc}`);
+    toast(`\u{1F60B} M\u0103m m\u0103m! \u0110\xE3 nh\u1EADn Buff: ${buff.desc}`);
   } else {
-    toast(`\u{1F922} \u1ECCe... M\xF9i v\u1ECB th\u1EADt \xE1m \u1EA3nh! B\u1EA1n b\u1ECB tr\u1EEB nh\u1EB9 HP tinh th\u1EA7n.`);
+    toast(`\u{1F922} \u1ECCe... M\xF9i v\u1ECB th\u1EADt t\u1ED3i t\u1EC7! May m\xE0 ch\u01B0a \u0111i b\u1EC7nh vi\u1EC7n.`);
   }
   save();
   renderStatus();
@@ -48803,24 +48923,25 @@ function injectKitchenCSS() {
   style.textContent = `
     .k-header { display:flex; justify-content:space-between; align-items:center; background:#f4e6cf; border:2px solid #ddc39a; padding:10px 14px; border-radius:8px; margin-bottom:12px; }
     .k-chef { font-weight:bold; font-size:14px; color:#c86a1a; display:flex; align-items:center; gap:6px; }
-    .k-exp { font-size:11px; color:#a3763d; font-weight:bold; }
+    .k-exp { font-size:11px; color:#a3763d; font-weight:bold; background:#fffdf4; padding:2px 8px; border-radius:10px; border:1px solid #d9c49a; }
     .k-grid { display:grid; grid-template-columns:1fr; gap:8px; max-height: 400px; overflow-y: auto; padding-right: 4px; }
     .k-pot { background:#fffdf4; border:2px inset #c9a273; border-radius:8px; padding:12px; margin-bottom:12px; min-height:60px; }
-    .k-ing-tag { color:#2e7d32; font-weight:bold; margin-right:8px; font-size:11px; display:inline-block; margin-top:2px; }
-    .k-ing-tag.miss { color:#d32f2f; }
+    .k-ing-tag { color:#2e7d32; font-weight:bold; margin-right:8px; font-size:11px; display:inline-block; margin-top:2px; background:#e8f5e9; padding:2px 6px; border-radius:4px; border:1px solid #c8e6c9;}
+    .k-ing-tag.miss { color:#d32f2f; background:#ffebee; border-color:#ffcdd2;}
   `;
   rootObj.appendChild(style);
 }
 function openKitchenModal() {
-  patchGameCore();
+  patchGameMechanics();
   initCookingState();
   injectKitchenCSS();
   const cooking = ctx.S.cooking;
   const activeBuffs = getActiveCookingBuffs();
+  const isMaxLevel = cooking.chefLevel >= 10 || cooking.chefExp === "MAX";
   const headerHtml = `
     <div class="k-header">
-      <div class="k-chef">${spriteSVG("kitchenIcon", 24)} \u0110\u1EA7u B\u1EBFp: Lv.${cooking.chefLevel}</div>
-      <div class="k-exp">EXP: ${cooking.chefExp} / ${cooking.chefLevel * 100}</div>
+      <div class="k-chef">${spriteSVG("kitchenIcon", 24)} \u0110\u1EA7u B\u1EBFp: Lv.${cooking.chefLevel} ${isMaxLevel ? "(MAX)" : ""}</div>
+      <div class="k-exp">EXP: ${isMaxLevel ? "MAX" : `${cooking.chefExp} / ${cooking.chefLevel * 100}`}</div>
     </div>
     <div class="tabs" style="justify-content:center;">
       <span class="tab ${activeKitchenTab === "recipes" ? "active" : ""}" id="tab-cook-recipes">S\xE1ch M\xF3n</span>
@@ -48936,48 +49057,67 @@ function openKitchenModal() {
     bodyHtml = `<div class="k-grid">${buffRows}</div>`;
   }
   openModal("Nh\xE0 B\u1EBFp N\xF4ng Tr\u1EA1i \u{1F373}", headerHtml + bodyHtml);
-  $id("tab-cook-recipes")?.addEventListener("click", () => {
+  const getEl = (id) => $id(id);
+  getEl("tab-cook-recipes")?.addEventListener("click", () => {
     activeKitchenTab = "recipes";
     openKitchenModal();
   });
-  $id("tab-cook-fusion")?.addEventListener("click", () => {
+  getEl("tab-cook-fusion")?.addEventListener("click", () => {
     activeKitchenTab = "fusion";
     openKitchenModal();
   });
-  $id("tab-cook-fridge")?.addEventListener("click", () => {
+  getEl("tab-cook-fridge")?.addEventListener("click", () => {
     activeKitchenTab = "fridge";
     openKitchenModal();
   });
-  $id("tab-cook-buffs")?.addEventListener("click", () => {
+  getEl("tab-cook-buffs")?.addEventListener("click", () => {
     activeKitchenTab = "buffs";
     openKitchenModal();
   });
-  $id("mbody")?.querySelectorAll("[data-cook]").forEach((btn) => {
-    btn.addEventListener("click", (e2) => cookRecipe(e2.currentTarget.dataset.cook));
-  });
-  $id("mbody")?.querySelectorAll("[data-eat]").forEach((btn) => {
-    btn.addEventListener("click", (e2) => eatDish(e2.currentTarget.dataset.eat));
-  });
+  const mbody = getEl("mbody");
+  if (mbody) {
+    mbody.querySelectorAll("[data-cook]").forEach((btn) => {
+      btn.addEventListener("click", (e2) => cookRecipe(
+        /** @type {HTMLElement} */
+        e2.currentTarget.dataset.cook
+      ));
+    });
+    mbody.querySelectorAll("[data-eat]").forEach((btn) => {
+      btn.addEventListener("click", (e2) => eatDish(
+        /** @type {HTMLElement} */
+        e2.currentTarget.dataset.eat
+      ));
+    });
+  }
   const fusionSelected = [];
-  const potEl = $id("fusion-pot");
-  $id("mbody")?.querySelectorAll("[data-add-ing]").forEach((btn) => {
-    btn.addEventListener("click", (e2) => {
-      const ingId = e2.currentTarget.dataset.addIng;
-      if (fusionSelected.length >= 4) return toast("N\u1ED3i \u0111\u1EA7y r\u1ED3i (t\u1ED1i \u0111a 4 c\u1EE7)!");
-      fusionSelected.push(ingId);
-      potEl.innerHTML = fusionSelected.map((id, idx) => `<span class="pick active" data-remove-fusion="${idx}">${CROPS[id]?.name || id} \u2715</span>`).join("");
-      potEl.querySelectorAll("[data-remove-fusion]").forEach((remBtn) => {
-        remBtn.addEventListener("click", (re) => {
-          fusionSelected.splice(parseInt(re.currentTarget.dataset.removeFusion), 1);
-          re.currentTarget.remove();
+  const potEl = getEl("fusion-pot");
+  if (mbody && potEl) {
+    mbody.querySelectorAll("[data-add-ing]").forEach((btn) => {
+      btn.addEventListener("click", (e2) => {
+        const target = (
+          /** @type {HTMLElement} */
+          e2.currentTarget
+        );
+        const ingId = target.dataset.addIng;
+        if (fusionSelected.length >= 4) return toast("N\u1ED3i \u0111\u1EA7y r\u1ED3i (t\u1ED1i \u0111a 4 c\u1EE7)!");
+        fusionSelected.push(ingId);
+        potEl.innerHTML = fusionSelected.map((id, idx) => `<span class="pick active" data-remove-fusion="${idx}">${CROPS[id]?.name || id} \u2715</span>`).join("");
+        potEl.querySelectorAll("[data-remove-fusion]").forEach((remBtn) => {
+          remBtn.addEventListener("click", (re) => {
+            fusionSelected.splice(parseInt(
+              /** @type {HTMLElement} */
+              re.currentTarget.dataset.removeFusion
+            ), 1);
+            re.currentTarget.remove();
+          });
         });
       });
     });
-  });
-  $id("btn-start-fusion")?.addEventListener("click", () => cookFreeFusion(fusionSelected));
+  }
+  getEl("btn-start-fusion")?.addEventListener("click", () => cookFreeFusion(fusionSelected));
 }
 function injectCookingButton() {
-  patchGameCore();
+  patchGameMechanics();
   const shadowRoot = document.querySelector("#star-tavern-farm-root")?.shadowRoot;
   if (!shadowRoot) return;
   const bottombar = shadowRoot.querySelector(".bottombar");
@@ -48991,7 +49131,7 @@ function injectCookingButton() {
     cfgBtn ? bottombar.insertBefore(btn, cfgBtn) : bottombar.appendChild(btn);
   }
 }
-var COOKING_P, COOKING_SPRITES, COOKING_RECIPES, _cookingPatched, activeKitchenTab;
+var COOKING_P, COOKING_SPRITES, COOKING_RECIPES, _cookingPatched, _sellEventAttached, activeKitchenTab;
 var init_cooking = __esm({
   "src/cooking.js"() {
     init_store();
@@ -49003,55 +49143,38 @@ var init_cooking = __esm({
     init_shop();
     COOKING_P = {
       ".": null,
-      // Trong suốt
       "K": "#231815",
       "k": "#3a2923",
-      // Viền tối / Đồ gốm đen
       "W": "#ffffff",
       "w": "#f5f0eb",
-      // Đĩa sứ trắng / Khói bốc
       "S": "#dcd0c0",
       "s": "#b8a898",
-      // Đĩa gốm mộc / Khay gỗ
       "R": "#e83e35",
       "r": "#b8231c",
-      // Cà chua / Ớt / Sốt đỏ / Trái cây
       "G": "#50b83c",
       "g": "#328024",
-      // Rau xanh / Hành lá
       "E": "#8ce060",
       "e": "#c8f598",
-      // Mầm cây / Cỏ tươi
       "Y": "#f8cf28",
       "y": "#d09f18",
-      // Trứng / Phô mai / Chiên giòn
       "O": "#f08028",
       "o": "#b85018",
-      // Thịt nướng / Bí ngô / Đất nung
       "B": "#805038",
       "b": "#503020",
-      // Nước dùng đậm / Xương hầm / Trà
       "P": "#d880b0",
       "p": "#a04880",
-      // Thịt hồng / Dâu tây
       "V": "#9050c0",
       "v": "#602888",
-      // Linh khí đột biến / Trà tím
       "C": "#70d0e0",
       "c": "#3090a0",
-      // Nước suối lỏng / Đá lạnh / Nước lấp lánh
       "F": "#e0f0f5",
       "f": "#a0c0d0",
-      // Tô bát thủy tinh / Sứ xanh
       "M": "#605850",
       "m": "#403830",
-      // Nồi đất / Nồi gang
       "A": "#ffd94d",
       "a": "#ffb300"
-      // Vàng lấp lánh / Ánh sao
     };
     COOKING_SPRITES = {
-      // 🍳 NÚT BẤM THANH CÔNG CỤ
       kitchenIcon: [
         "................",
         "......ww........",
@@ -49070,7 +49193,6 @@ var init_cooking = __esm({
         ".....k..k.......",
         "................"
       ],
-      // 1. Salad Cherry Tươi
       salad_cherry: [
         "................",
         ".....SSSSSS.....",
@@ -49089,7 +49211,6 @@ var init_cooking = __esm({
         "................",
         "................"
       ],
-      // 2. Súp Cà Chua Trứng Mây
       soup_tomato: [
         "................",
         "......wwww......",
@@ -49108,7 +49229,6 @@ var init_cooking = __esm({
         "................",
         "................"
       ],
-      // 3. Chả Giò Giá Đỗ Chiên Giòn
       spring_rolls: [
         "................",
         "......wwww......",
@@ -49127,7 +49247,6 @@ var init_cooking = __esm({
         "................",
         "................"
       ],
-      // 4. Canh Củ Cải Rong Tảo
       radish_soup: [
         "................",
         ".......w........",
@@ -49146,7 +49265,6 @@ var init_cooking = __esm({
         ".....ffffff.....",
         "................"
       ],
-      // 5. Kẹo Hồ Lô Dâu Tây
       candied_strawberry: [
         "................",
         ".......ww.......",
@@ -49165,7 +49283,6 @@ var init_cooking = __esm({
         ".......bb.......",
         ".......bb......."
       ],
-      // 6. Chè Củ Năng Củ Ấu
       sweet_soup: [
         "................",
         "......ffff......",
@@ -49184,7 +49301,6 @@ var init_cooking = __esm({
         "................",
         "................"
       ],
-      // 7. Củ Niễng Xào Thịt
       stir_fry_jiaobai: [
         ".......w........",
         "......w.w.......",
@@ -49203,7 +49319,6 @@ var init_cooking = __esm({
         "................",
         "................"
       ],
-      // 8. Lẩu Củ Sen Đầm Lầy (16x16)
       hotpot_lotus: [
         ".......w........",
         ".....ww.ww......",
@@ -49222,7 +49337,6 @@ var init_cooking = __esm({
         "................",
         "................"
       ],
-      // 9. Súp Phát Sáng (Glow Soup)
       glow_soup: [
         ".......A........",
         "......A.A.......",
@@ -49241,7 +49355,6 @@ var init_cooking = __esm({
         "................",
         "................"
       ],
-      // 10. Hoa Kẹo Mút (Candy Flower)
       candy_flower: [
         "................",
         "......WWWW......",
@@ -49260,7 +49373,6 @@ var init_cooking = __esm({
         ".......bb.......",
         "................"
       ],
-      // 11. Trà Dây Leo Opal
       opal_tea: [
         ".......w........",
         "......w.w.......",
@@ -49279,7 +49391,6 @@ var init_cooking = __esm({
         "................",
         "................"
       ],
-      // 12. Bánh Bí Ngô Ánh Trăng
       pie_pumpkin: [
         "................",
         "......OOOO......",
@@ -49298,7 +49409,6 @@ var init_cooking = __esm({
         "................",
         "................"
       ],
-      // 13. Sườn Rồng Sốt Quả Long Tinh
       dragon_ribs: [
         ".......V........",
         "......V.V.......",
@@ -49317,7 +49427,6 @@ var init_cooking = __esm({
         "................",
         "................"
       ],
-      // 14. Ramen Linh Khí Tiên Thiên
       mutant_ramen: [
         ".......w........",
         "......w.w.......",
@@ -49336,7 +49445,6 @@ var init_cooking = __esm({
         "......k..k......",
         "................"
       ],
-      // 15. Thức Ăn Thất Bại Dị Dạng
       failed_dish: [
         "................",
         ".......ww.......",
@@ -49363,9 +49471,9 @@ var init_cooking = __esm({
         reqLevel: 1,
         cookTime: 3,
         sellPrice: 150,
-        desc: "Gi\xF2n ng\u1ECDt thanh m\xE1t. T\u0103ng 20% t\u1ED1c \u0111\u1ED9 m\u1ECDc c\xE2y trang \u0110\u1ED3ng C\u1ECF trong 1 gi\u1EDD.",
+        desc: "Gi\xF2n ng\u1ECDt thanh m\xE1t. Gi\u1EA3m 20% th\u1EDDi gian m\u1ECDc c\xE2y khi gieo h\u1EA1t \u1EDF \u0110\u1ED3ng C\u1ECF (T\xE1c d\u1EE5ng 1 gi\u1EDD).",
         ingredients: { radish: 2, douya: 2 },
-        buff: { type: "crop_speed", zone: 1, val: 0.8, durationMs: 60 * 60 * 1e3, desc: "Rau m\u1ECDc nhanh +20% (\u0110\u1ED3ng c\u1ECF)" }
+        buff: { type: "crop_speed", zone: 1, val: 0.8, durationMs: 60 * 60 * 1e3, desc: "Gi\u1EA3m 20% th\u1EDDi gian m\u1ECDc c\xE2y \u1EDF \u0110\u1ED3ng c\u1ECF" }
       },
       spring_rolls: {
         name: "Ch\u1EA3 Gi\xF2 Gi\xE1 \u0110\u1ED7",
@@ -49373,9 +49481,9 @@ var init_cooking = __esm({
         reqLevel: 1,
         cookTime: 3,
         sellPrice: 130,
-        desc: "V\u1ECF gi\xF2n r\u1EE5m, nh\xE2n th\u01A1m l\u1EEBng. H\u1ED3i 10% HP cho Pet.",
+        desc: "V\u1ECF gi\xF2n r\u1EE5m, nh\xE2n th\u01A1m l\u1EEBng. H\u1ED3i l\u1EADp t\u1EE9c 20% M\xE1u cho to\xE0n \u0111\u1ED9i Pet.",
         ingredients: { douya: 4 },
-        buff: { type: "pet_heal", val: 0.1, durationMs: 0, desc: "H\u1ED3i 10% Max HP cho to\xE0n \u0111\u1ED9i Pet" }
+        buff: { type: "pet_heal", val: 0.2, durationMs: 0, desc: "H\u1ED3i ngay 20% Max HP cho Pet" }
       },
       radish_soup: {
         name: "Canh C\u1EE7 C\u1EA3i Rong T\u1EA3o",
@@ -49393,9 +49501,9 @@ var init_cooking = __esm({
         reqLevel: 2,
         cookTime: 5,
         sellPrice: 220,
-        desc: "B\xE1t s\xFAp chua ng\u1ECDt b\u1ED1c kh\xF3i. H\u1ED3i 30% Max HP cho to\xE0n \u0111\u1ED9i Pet.",
+        desc: "B\xE1t s\xFAp chua ng\u1ECDt b\u1ED1c kh\xF3i. H\u1ED3i l\u1EADp t\u1EE9c 50% M\xE1u cho to\xE0n \u0111\u1ED9i Pet.",
         ingredients: { tomato: 3, douya: 1 },
-        buff: { type: "pet_heal", val: 0.3, durationMs: 0, desc: "H\u1ED3i 30% Max HP cho to\xE0n \u0111\u1ED9i Pet" }
+        buff: { type: "pet_heal", val: 0.5, durationMs: 0, desc: "H\u1ED3i ngay 50% Max HP cho Pet" }
       },
       candied_strawberry: {
         name: "K\u1EB9o H\u1ED3 L\xF4 D\xE2u T\xE2y",
@@ -49403,9 +49511,9 @@ var init_cooking = __esm({
         reqLevel: 2,
         cookTime: 4,
         sellPrice: 850,
-        desc: "Ng\u1ECDt l\u1ECBm tim. T\u0103ng 10% T\u1EC9 l\u1EC7 Crit Rate cho Pet trong 30 ph\xFAt.",
+        desc: "Ng\u1ECDt l\u1ECBm tim. T\u0103ng 15% T\u1EC9 l\u1EC7 Ch\xED M\u1EA1ng (Crit Rate) cho Pet trong 30 ph\xFAt.",
         ingredients: { strawberry: 1, douya: 1 },
-        buff: { type: "hero_crit", val: 0.1, durationMs: 30 * 60 * 1e3, desc: "Pet +10% Crit Rate" }
+        buff: { type: "hero_crit", val: 0.15, durationMs: 30 * 60 * 1e3, desc: "Pet +15% T\u1EC9 l\u1EC7 Crit" }
       },
       sweet_soup: {
         name: "Ch\xE8 C\u1EE7 N\u0103ng C\u1EE7 \u1EA4u",
@@ -49413,9 +49521,9 @@ var init_cooking = __esm({
         reqLevel: 3,
         cookTime: 8,
         sellPrice: 800,
-        desc: "Gi\u1EA3i nhi\u1EC7t xua tan m\u1EC7t m\u1ECFi. T\u0103ng 15% t\u1ED1c \u0111\u1ED9 m\u1ECDc c\xE2y trang V\xF9ng N\u01B0\u1EDBc.",
+        desc: "Gi\u1EA3i nhi\u1EC7t xua tan m\u1EC7t m\u1ECFi. Gi\u1EA3m 25% th\u1EDDi gian m\u1ECDc c\xE2y \u1EDF V\xF9ng N\u01B0\u1EDBc.",
         ingredients: { biqi: 2, lingjiao: 1 },
-        buff: { type: "crop_speed", zone: 2, val: 0.85, durationMs: 60 * 60 * 1e3, desc: "Rau m\u1ECDc nhanh +15% (V\xF9ng n\u01B0\u1EDBc)" }
+        buff: { type: "crop_speed", zone: 2, val: 0.75, durationMs: 60 * 60 * 1e3, desc: "Rau m\u1ECDc nhanh +25% (V\xF9ng n\u01B0\u1EDBc)" }
       },
       stir_fry_jiaobai: {
         name: "C\u1EE7 Ni\u1EC5ng X\xE0o D\xF2n",
@@ -49423,9 +49531,9 @@ var init_cooking = __esm({
         reqLevel: 3,
         cookTime: 8,
         sellPrice: 1300,
-        desc: "C\u1EF1c k\u1EF3 t\u1ED1n c\u01A1m. T\u0103ng 10% M\xE1u t\u1ED1i \u0111a (Max HP) cho Pet trong 1 gi\u1EDD.",
+        desc: "C\u1EF1c k\u1EF3 t\u1ED1n c\u01A1m. Buff x1.5 M\xE1u t\u1ED1i \u0111a (Max HP) cho Pet trong 1 gi\u1EDD.",
         ingredients: { jiaobai: 2, chuncai: 1 },
-        buff: { type: "hero_hp", val: 0.1, durationMs: 60 * 60 * 1e3, desc: "Pet +10% Max HP" }
+        buff: { type: "hero_hp", val: 0.5, durationMs: 60 * 60 * 1e3, desc: "Pet +50% Max HP" }
       },
       hotpot_lotus: {
         name: "L\u1EA9u C\u1EE7 Sen \u0110\u1EA7m L\u1EA7y",
@@ -49433,9 +49541,9 @@ var init_cooking = __esm({
         reqLevel: 4,
         cookTime: 12,
         sellPrice: 3500,
-        desc: "N\u1ED3i l\u1EA9u \u0111\u1EADm \u0111\xE0 th\u01A1m n\u1EE9c. T\u0103ng 25% gi\xE1 b\xE1n m\u1ECDi n\xF4ng s\u1EA3n trong 2 gi\u1EDD.",
+        desc: "N\u1ED3i l\u1EA9u \u0111\u1EADm \u0111\xE0 th\u01A1m n\u1EE9c. Th\u01B0\u1EDFng th\xEAm 30% l\u1EE3i nhu\u1EADn khi B\xE1n b\u1EA5t k\u1EF3 m\xF3n g\xEC trong t\xFAi!",
         ingredients: { lianou: 1, biqi: 2, lingjiao: 2 },
-        buff: { type: "sell_price_boost", val: 1.25, durationMs: 2 * 60 * 60 * 1e3, desc: "T\u0103ng +25% Gi\xE1 b\xE1n n\xF4ng s\u1EA3n" }
+        buff: { type: "sell_price_boost", val: 1.3, durationMs: 2 * 60 * 60 * 1e3, desc: "Nh\u1EADn th\xEAm 30% V\xE0ng khi B\xE1n \u0111\u1ED3" }
       },
       glow_soup: {
         name: "S\xFAp Tinh Th\u1EA1ch",
@@ -49443,9 +49551,9 @@ var init_cooking = __esm({
         reqLevel: 4,
         cookTime: 12,
         sellPrice: 1600,
-        desc: "Ph\xE1t s\xE1ng l\u1EA5p l\xE1nh trong \u0111\xEAm. T\u0103ng 20% t\u1ED1c \u0111\u1ED9 m\u1ECDc c\xE2y trang Khu M\u1ECF.",
+        desc: "Ph\xE1t s\xE1ng l\u1EA5p l\xE1nh trong \u0111\xEAm. Gi\u1EA3m 30% th\u1EDDi gian m\u1ECDc c\xE2y \u1EDF Khu M\u1ECF.",
         ingredients: { wujing: 2, starbush: 1 },
-        buff: { type: "crop_speed", zone: 3, val: 0.8, durationMs: 60 * 60 * 1e3, desc: "Rau m\u1ECDc nhanh +20% (Khu m\u1ECF)" }
+        buff: { type: "crop_speed", zone: 3, val: 0.7, durationMs: 60 * 60 * 1e3, desc: "Rau m\u1ECDc nhanh +30% (Khu m\u1ECF)" }
       },
       candy_flower: {
         name: "Hoa K\u1EB9o M\xFAt B\u1EA3o Th\u1EA1ch",
@@ -49453,9 +49561,9 @@ var init_cooking = __esm({
         reqLevel: 5,
         cookTime: 15,
         sellPrice: 4e3,
-        desc: "\u0110\u1EB9p \u0111\u1EBFn m\u1EE9c kh\xF4ng n\u1EE1 \u0103n. T\u0103ng 10% T\u1EC9 l\u1EC7 r\u1EDBt M\u1EA3nh Ng\xF4i Sao/L\u0103ng Quang khi Pet nh\u1EB7t kho b\xE1u.",
+        desc: "\u0110\u1EB9p \u0111\u1EBFn m\u1EE9c kh\xF4ng n\u1EE1 \u0103n. C\u1ED9ng th\xEAm 20% N\xE9 Tr\xE1nh cho t\u1EA5t c\u1EA3 Pet \u1EDF H\u1EA7m ng\u1EE5c.",
         ingredients: { gemflower: 1, moonberry: 1 },
-        buff: { type: "treasure_boost", val: 1.1, durationMs: 2 * 60 * 60 * 1e3, desc: "Pet nh\u1EB7t Kho B\xE1u may m\u1EAFn +10%" }
+        buff: { type: "hero_dodge", val: 0.2, durationMs: 2 * 60 * 60 * 1e3, desc: "Pet +20% T\u1EC9 l\u1EC7 N\xE9 Tr\xE1nh" }
       },
       opal_tea: {
         name: "Tr\xE0 D\xE2y Leo Opal",
@@ -49463,9 +49571,9 @@ var init_cooking = __esm({
         reqLevel: 5,
         cookTime: 15,
         sellPrice: 2500,
-        desc: "N\u01B0\u1EDBc tr\xE0 xanh ng\u1ECDc b\xEDch. T\u0103ng 20% T\u1ED1c \u0111\u1ED9 di chuy\u1EC3n v\xE0 n\xE9 tr\xE1nh cho Pet.",
+        desc: "N\u01B0\u1EDBc tr\xE0 xanh ng\u1ECDc b\xEDch, u\u1ED1ng v\xE0o nh\u1EB9 b\u1EABng. T\u0103ng X2 T\u1ED1c \u0111\u1ED9 di chuy\u1EC3n cho Pet.",
         ingredients: { opalvine: 1, wujing: 1 },
-        buff: { type: "hero_dodge", val: 0.2, durationMs: 60 * 60 * 1e3, desc: "Pet +20% N\xE9 Tr\xE1nh (Dodge)" }
+        buff: { type: "hero_speed", val: 1, durationMs: 60 * 60 * 1e3, desc: "Pet X2 T\u1ED1c \u0111\xE1nh (SPD)" }
       },
       pie_pumpkin: {
         name: "B\xE1nh B\xED Ng\xF4 \xC1nh Tr\u0103ng",
@@ -49473,9 +49581,9 @@ var init_cooking = __esm({
         reqLevel: 6,
         cookTime: 20,
         sellPrice: 3e3,
-        desc: "Th\u01A1m l\u1EEBng m\xF9i b\u01A1 s\u1EEFa. T\u0103ng 25% t\u1EF7 l\u1EC7 r\u01A1i Gacha Tickets.",
+        desc: "Th\u01A1m l\u1EEBng m\xF9i b\u01A1 s\u1EEFa. Buff m\xE1u (HP) v\xE0 S\xE1t th\u01B0\u01A1ng (ATK) c\u1EE7a Pet l\xEAn 20%!",
         ingredients: { pumpkin: 2, moonberry: 2 },
-        buff: { type: "ticket_boost", val: 1.25, durationMs: 2 * 60 * 60 * 1e3, desc: "T\u1EF7 l\u1EC7 r\u1EDBt v\xE9 Gacha +25%" }
+        buff: { type: "hero_stats_boost", atkVal: 1.2, hpVal: 1.2, durationMs: 2 * 60 * 60 * 1e3, desc: "Pet +20% ATK & +20% HP" }
       },
       dragon_ribs: {
         name: "S\u01B0\u1EDDn R\u1ED3ng S\u1ED1t Long Tinh",
@@ -49483,9 +49591,9 @@ var init_cooking = __esm({
         reqLevel: 7,
         cookTime: 30,
         sellPrice: 12e3,
-        desc: "M\xF3n \u0103n v\u01B0\u01A1ng gi\u1EA3. T\u0103ng +40% ATK cho to\xE0n \u0111\u1ED9i Pet trong Th\xE1m Hi\u1EC3m.",
+        desc: "M\xF3n \u0103n v\u01B0\u01A1ng gi\u1EA3 tr\xE0n \u0111\u1EA7y s\u1EE9c m\u1EA1nh. T\u0103ng +100% ATK cho to\xE0n \u0111\u1ED9i Pet trong Th\xE1m Hi\u1EC3m!",
         ingredients: { dragoncry: 1, starbush: 2, tomato: 2 },
-        buff: { type: "hero_atk", val: 0.4, durationMs: 3 * 60 * 60 * 1e3, desc: "Pet +40% ATK (3 gi\u1EDD)" }
+        buff: { type: "hero_atk", val: 1, durationMs: 3 * 60 * 60 * 1e3, desc: "Pet X2 S\u1EE9c m\u1EA1nh B\u1EA1o T\xE0n (ATK)" }
       },
       mutant_ramen: {
         name: "Ramen Linh Kh\xED Ti\xEAn Thi\xEAn",
@@ -49493,9 +49601,9 @@ var init_cooking = __esm({
         reqLevel: 7,
         cookTime: 25,
         sellPrice: 6e3,
-        desc: "B\xE1t ramen b\u1ED1c linh kh\xED. L\u1EA5y v\xE0o Takeout s\u1EBD l\xE0m nh\xE2n v\u1EADt AI c\u1EF1c k\u1EF3 h\u01B0ng ph\u1EA5n.",
+        desc: "B\xE1t ramen b\u1ED1c linh kh\xED. B\u1EA1n v\xE0 \u0111\u1ED1i t\xE1c RP s\u1EBD c\u1EA3m th\u1EA5y h\u01B0ng ph\u1EA5n t\u1ED9t \u0111\u1ED9 trong t\u01B0\u01A1ng lai.",
         ingredients: { wujing: 2, chuncai: 1, douya: 2 },
-        buff: { type: "rp_story_boost", val: 1, durationMs: 4 * 60 * 60 * 1e3, desc: "M\xF3n qu\xE0 linh kh\xED tuy\u1EC7t h\u1EA3o cho RP" }
+        buff: { type: "rp_story_boost", val: 1, durationMs: 4 * 60 * 60 * 1e3, desc: "Buff t\xE2m tr\u1EA1ng t\xEDch c\u1EF1c cho Roleplay" }
       },
       failed_dish: {
         name: "Th\u1EE9c \u0102n D\u1ECB D\u1EA1ng",
@@ -49505,13 +49613,14 @@ var init_cooking = __esm({
         sellPrice: 5,
         desc: "H\u1ED7n h\u1EE3p b\u1ED1c kh\xF3i \u0111en do n\u1EA5u sai c\xF4ng th\u1EE9c. Ch\u1EC9 c\xF3 th\u1EC3 \u0111em phi tang...",
         ingredients: {},
-        buff: { type: "none", val: 0, durationMs: 0, desc: "Kh\xF4ng c\xF3 hi\u1EC7u \u1EE9ng \u0111\u1EB7c bi\u1EC7t, \u0103n v\xE0o \u0111au b\u1EE5ng!" }
+        buff: { type: "none", val: 0, durationMs: 0, desc: "Ch\u1EC9 khi\u1EBFn b\u1EA1n \u0111au b\u1EE5ng th\xF4i!" }
       }
     };
     _cookingPatched = false;
+    _sellEventAttached = false;
     activeKitchenTab = "recipes";
     if (typeof window !== "undefined") {
-      patchGameCore();
+      patchGameMechanics();
       const tryInject = () => {
         initCookingState();
         injectCookingButton();

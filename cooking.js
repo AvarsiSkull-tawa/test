@@ -121,108 +121,96 @@ export const COOKING_SPRITES = {
         "...fVVYyYyVVf...", "..fVYyWwWwYyVf..", ".fVYywwPpwwYyVf.", ".fVYywwPPwwYyVf.",
         ".fVYyWwWwWwYyVf.", ".fVVYyYyYyYyVVf.", "..fVVVVVVVVVVf..", "...ffffffffff...",
         "....FFFFFFFF....", ".....kkkkkk.....", "......k..k......", "................"
-    ],
-    failed_dish: [
-        "................", ".......ww.......", "......w..w......", ".......vv.......",
-        "......vvvv......", ".....vVvVvv.....", "....vVvVVvVv....", "....vVVvvVVv....",
-        "...vVvVVVVvVv...", "..vVVvVVVVvvVv..", "..vvvvvvvvvvvv..", "...SSSSSSSSSS...",
-        "................", "................", "................", "................"
     ]
 };
 
 // ============================================================================
-// 3. RECIPES & DISH DATABASE
+// 3. RECIPES & DISH DATABASE (Tất cả được MỞ KHÓA TỪ ĐẦU)
 // ============================================================================
 export const COOKING_RECIPES = {
     salad_cherry: {
-        name: 'Salad Cherry Tươi', category: 'grass', reqLevel: 1, cookTime: 3, sellPrice: 150,
+        name: 'Salad Cherry Tươi', sellPrice: 150,
         desc: 'Giòn ngọt thanh mát. Giảm 20% thời gian mọc cây khi gieo hạt ở Đồng Cỏ (Tác dụng 1 giờ).',
         ingredients: { radish: 2, douya: 2 },
         buff: { type: 'crop_speed', zone: 1, val: 0.8, durationMs: 60 * 60 * 1000, desc: 'Giảm 20% thời gian mọc cây ở Đồng cỏ' }
     },
     spring_rolls: {
-        name: 'Chả Giò Giá Đỗ', category: 'grass', reqLevel: 1, cookTime: 3, sellPrice: 130,
+        name: 'Chả Giò Giá Đỗ', sellPrice: 130,
         desc: 'Vỏ giòn rụm, nhân thơm lừng. Hồi lập tức 20% Máu cho toàn đội Pet.',
         ingredients: { douya: 4 },
         buff: { type: 'pet_heal', val: 0.2, durationMs: 0, desc: 'Hồi ngay 20% Max HP cho Pet' }
     },
     radish_soup: {
-        name: 'Canh Củ Cải Rong Tảo', category: 'water', reqLevel: 2, cookTime: 5, sellPrice: 200,
+        name: 'Canh Củ Cải Rong Tảo', sellPrice: 200,
         desc: 'Thanh lọc cơ thể. Tăng 10% Tốc đánh (SPD) cho Pet trong 30 phút.',
         ingredients: { radish: 2, chuncai: 2 },
         buff: { type: 'hero_speed', val: 0.1, durationMs: 30 * 60 * 1000, desc: 'Pet +10% Tốc đánh' }
     },
     soup_tomato: {
-        name: 'Súp Cà Chua Bồng Bềnh', category: 'grass', reqLevel: 2, cookTime: 5, sellPrice: 220,
+        name: 'Súp Cà Chua Bồng Bềnh', sellPrice: 220,
         desc: 'Bát súp chua ngọt bốc khói. Hồi lập tức 50% Máu cho toàn đội Pet.',
         ingredients: { tomato: 3, douya: 1 },
         buff: { type: 'pet_heal', val: 0.5, durationMs: 0, desc: 'Hồi ngay 50% Max HP cho Pet' }
     },
     candied_strawberry: {
-        name: 'Kẹo Hồ Lô Dâu Tây', category: 'grass', reqLevel: 2, cookTime: 4, sellPrice: 850,
+        name: 'Kẹo Hồ Lô Dâu Tây', sellPrice: 850,
         desc: 'Ngọt lịm tim. Tăng 15% Tỉ lệ Chí Mạng (Crit Rate) cho Pet trong 30 phút.',
         ingredients: { strawberry: 1, douya: 1 },
         buff: { type: 'hero_crit', val: 0.15, durationMs: 30 * 60 * 1000, desc: 'Pet +15% Tỉ lệ Crit' }
     },
     sweet_soup: {
-        name: 'Chè Củ Năng Củ Ấu', category: 'water', reqLevel: 3, cookTime: 8, sellPrice: 800,
+        name: 'Chè Củ Năng Củ Ấu', sellPrice: 800,
         desc: 'Giải nhiệt xua tan mệt mỏi. Giảm 25% thời gian mọc cây ở Vùng Nước.',
         ingredients: { biqi: 2, lingjiao: 1 },
         buff: { type: 'crop_speed', zone: 2, val: 0.75, durationMs: 60 * 60 * 1000, desc: 'Rau mọc nhanh +25% (Vùng nước)' }
     },
     stir_fry_jiaobai: {
-        name: 'Củ Niễng Xào Dòn', category: 'water', reqLevel: 3, cookTime: 8, sellPrice: 1300,
+        name: 'Củ Niễng Xào Dòn', sellPrice: 1300,
         desc: 'Cực kỳ tốn cơm. Buff x1.5 Máu tối đa (Max HP) cho Pet trong 1 giờ.',
         ingredients: { jiaobai: 2, chuncai: 1 },
         buff: { type: 'hero_hp', val: 0.5, durationMs: 60 * 60 * 1000, desc: 'Pet +50% Max HP' }
     },
     hotpot_lotus: {
-        name: 'Lẩu Củ Sen Đầm Lầy', category: 'water', reqLevel: 4, cookTime: 12, sellPrice: 3500,
+        name: 'Lẩu Củ Sen Đầm Lầy', sellPrice: 3500,
         desc: 'Nồi lẩu đậm đà thơm nức. Thưởng thêm 30% lợi nhuận khi Bán bất kỳ món gì trong túi!',
         ingredients: { lianou: 1, biqi: 2, lingjiao: 2 },
         buff: { type: 'sell_price_boost', val: 1.30, durationMs: 2 * 60 * 60 * 1000, desc: 'Nhận thêm 30% Vàng khi Bán đồ' }
     },
     glow_soup: {
-        name: 'Súp Tinh Thạch', category: 'mine', reqLevel: 4, cookTime: 12, sellPrice: 1600,
+        name: 'Súp Tinh Thạch', sellPrice: 1600,
         desc: 'Phát sáng lấp lánh trong đêm. Giảm 30% thời gian mọc cây ở Khu Mỏ.',
         ingredients: { wujing: 2, starbush: 1 },
         buff: { type: 'crop_speed', zone: 3, val: 0.7, durationMs: 60 * 60 * 1000, desc: 'Rau mọc nhanh +30% (Khu mỏ)' }
     },
     candy_flower: {
-        name: 'Hoa Kẹo Mút Bảo Thạch', category: 'mine', reqLevel: 5, cookTime: 15, sellPrice: 4000,
+        name: 'Hoa Kẹo Mút Bảo Thạch', sellPrice: 4000,
         desc: 'Đẹp đến mức không nỡ ăn. Cộng thêm 20% Né Tránh cho tất cả Pet ở Hầm ngục.',
         ingredients: { gemflower: 1, moonberry: 1 },
         buff: { type: 'hero_dodge', val: 0.2, durationMs: 2 * 60 * 60 * 1000, desc: 'Pet +20% Tỉ lệ Né Tránh' }
     },
     opal_tea: {
-        name: 'Trà Dây Leo Opal', category: 'mine', reqLevel: 5, cookTime: 15, sellPrice: 2500,
+        name: 'Trà Dây Leo Opal', sellPrice: 2500,
         desc: 'Nước trà xanh ngọc bích, uống vào nhẹ bẫng. Tăng X2 Tốc độ di chuyển cho Pet.',
         ingredients: { opalvine: 1, wujing: 1 },
         buff: { type: 'hero_speed', val: 1.0, durationMs: 60 * 60 * 1000, desc: 'Pet X2 Tốc đánh (SPD)' }
     },
     pie_pumpkin: {
-        name: 'Bánh Bí Ngô Ánh Trăng', category: 'main', reqLevel: 6, cookTime: 20, sellPrice: 3000,
+        name: 'Bánh Bí Ngô Ánh Trăng', sellPrice: 3000,
         desc: 'Thơm lừng mùi bơ sữa. Buff máu (HP) và Sát thương (ATK) của Pet lên 20%!',
         ingredients: { pumpkin: 2, moonberry: 2 },
         buff: { type: 'hero_stats_boost', atkVal: 1.2, hpVal: 1.2, durationMs: 2 * 60 * 60 * 1000, desc: 'Pet +20% ATK & +20% HP' }
     },
     dragon_ribs: {
-        name: 'Sườn Rồng Sốt Long Tinh', category: 'gourmet', reqLevel: 7, cookTime: 30, sellPrice: 12000,
+        name: 'Sườn Rồng Sốt Long Tinh', sellPrice: 12000,
         desc: 'Món ăn vương giả tràn đầy sức mạnh. Tăng +100% ATK cho toàn đội Pet trong Thám Hiểm!',
         ingredients: { dragoncry: 1, starbush: 2, tomato: 2 },
         buff: { type: 'hero_atk', val: 1.0, durationMs: 3 * 60 * 60 * 1000, desc: 'Pet X2 Sức mạnh Bạo Tàn (ATK)' }
     },
     mutant_ramen: {
-        name: 'Ramen Linh Khí Tiên Thiên', category: 'mutant', reqLevel: 7, cookTime: 25, sellPrice: 6000,
-        desc: 'Bát ramen bốc linh khí. Bạn và đối tác RP sẽ cảm thấy hưng phấn tột độ trong tương lai.',
+        name: 'Ramen Linh Khí Tiên Thiên', sellPrice: 6000,
+        desc: 'Bát ramen bốc linh khí. Lấy vào Takeout, bạn và bạn Chat sẽ cảm thấy hưng phấn tột độ.',
         ingredients: { wujing: 2, chuncai: 1, douya: 2 },
         buff: { type: 'rp_story_boost', val: 1, durationMs: 4 * 60 * 60 * 1000, desc: 'Buff tâm trạng tích cực cho Roleplay' }
-    },
-    failed_dish: {
-        name: 'Thức Ăn Dị Dạng', category: 'failed', reqLevel: 1, cookTime: 3, sellPrice: 5,
-        desc: 'Hỗn hợp bốc khói đen do nấu sai công thức. Chỉ có thể đem phi tang...',
-        ingredients: {},
-        buff: { type: 'none', val: 0, durationMs: 0, desc: 'Chỉ khiến bạn đau bụng thôi!' }
     }
 };
 
@@ -230,7 +218,7 @@ export const COOKING_RECIPES = {
 // 4. DAEMON WORKER & EVENT INTERCEPTOR (AN TOÀN HƠN)
 // ============================================================================
 let _cookingPatched = false;
-let _sellEventAttached = false; // Biến ngoài để tránh báo lỗi Property ts2339 trên ShadowRoot
+let _sellEventAttached = false;
 
 function patchGameMechanics() {
     if (_cookingPatched) return;
@@ -337,7 +325,6 @@ function patchGameMechanics() {
     if (shadowRoot && !_sellEventAttached) {
         _sellEventAttached = true;
         shadowRoot.addEventListener('click', (e) => {
-            // Cast e.target sang Element để IDE không báo lỗi
             const target = /** @type {Element} */ (e.target);
             const sellBtn = target.closest('#sellGo, #sellSelGo, #sellSeedGo');
             if (sellBtn) {
@@ -361,15 +348,13 @@ function patchGameMechanics() {
 }
 
 // ============================================================================
-// 5. HÀM QUẢN LÝ TĂNG CẤP EXP ĐẦU BẾP ĐƯỢC CHUẨN HOÁ
+// 5. HÀM QUẢN LÝ NẤU ĂN VÀ TRẠNG THÁI (ĐÃ LƯỢC BỎ LEVEL & FUSION)
 // ============================================================================
 export function initCookingState() {
     if (!ctx.S.cooking) {
-        ctx.S.cooking = { chefLevel: 1, chefExp: 0, unlockedRecipes: ['salad_cherry', 'spring_rolls'], activeBuffs: [] };
+        ctx.S.cooking = { activeBuffs: [] };
     }
-    if (!ctx.S.cooking.unlockedRecipes) ctx.S.cooking.unlockedRecipes = ['salad_cherry'];
     if (!ctx.S.cooking.activeBuffs) ctx.S.cooking.activeBuffs = [];
-    if (ctx.S.cooking.chefExp === 'MAX') ctx.S.cooking.chefLevel = 10;
 }
 
 export function getActiveCookingBuffs() {
@@ -377,39 +362,6 @@ export function getActiveCookingBuffs() {
     const nowMs = now();
     ctx.S.cooking.activeBuffs = ctx.S.cooking.activeBuffs.filter(b => b.expiresAt > nowMs);
     return ctx.S.cooking.activeBuffs;
-}
-
-function processChefExp(expGain, dishName) {
-    if (ctx.S.cooking.chefLevel >= 10) {
-        ctx.S.cooking.chefExp = 'MAX';
-        toast(`🍳 Nấu xuất sắc món ${dishName}! (Đã đạt Mức Độ Bếp Trưởng MAX)`);
-        return;
-    }
-
-    ctx.S.cooking.chefExp += expGain;
-    let levelUpCount = 0;
-
-    while (ctx.S.cooking.chefLevel < 10) {
-        const reqExp = ctx.S.cooking.chefLevel * 100;
-        if (ctx.S.cooking.chefExp >= reqExp) {
-            ctx.S.cooking.chefExp -= reqExp;
-            ctx.S.cooking.chefLevel++;
-            levelUpCount++;
-        } else {
-            break;
-        }
-    }
-
-    if (ctx.S.cooking.chefLevel >= 10) {
-        ctx.S.cooking.chefLevel = 10;
-        ctx.S.cooking.chefExp = 'MAX';
-    }
-
-    if (levelUpCount > 0) {
-        toast(`🎉 BÙM! Trình độ thăng tiến lên Đầu Bếp Lv.${ctx.S.cooking.chefLevel}!`);
-    } else {
-        toast(`🍳 Nấu xuất sắc món ${dishName}! (+${expGain} EXP)`);
-    }
 }
 
 export function canCookRecipe(recipeId) {
@@ -425,7 +377,6 @@ export function cookRecipe(recipeId) {
     initCookingState();
     const recipe = COOKING_RECIPES[recipeId];
     if (!recipe) return toast('Công thức không tồn tại!');
-    if (ctx.S.cooking.chefLevel < recipe.reqLevel) return toast(`Cần Đầu Bếp Lv.${recipe.reqLevel} để nấu món này!`);
     if (!canCookRecipe(recipeId)) return toast('Thiếu nguyên liệu trong Balo!');
 
     for (const [ingId, reqAmount] of Object.entries(recipe.ingredients)) {
@@ -436,51 +387,7 @@ export function cookRecipe(recipeId) {
     const foodKey = `food_${recipeId}`;
     ctx.S.bag[foodKey] = (ctx.S.bag[foodKey] || 0) + 1;
 
-    processChefExp(recipe.cookTime * 10, recipe.name);
-    save(); All.renderStatus(); openKitchenModal();
-}
-
-export function cookFreeFusion(ingredientList) {
-    initCookingState();
-    if (!ingredientList || ingredientList.length === 0) return toast('Hãy chọn ít nhất 1 nguyên liệu!');
-
-    const countMap = {};
-    for (const ingId of ingredientList) {
-        countMap[ingId] = (countMap[ingId] || 0) + 1;
-        if ((ctx.S.bag[ingId] || 0) < countMap[ingId]) return toast('Không đủ nguyên liệu trong Balo!');
-    }
-
-    for (const [ingId, amt] of Object.entries(countMap)) {
-        ctx.S.bag[ingId] -= amt;
-        if (ctx.S.bag[ingId] <= 0) delete ctx.S.bag[ingId];
-    }
-
-    let matchedRecipeId = null;
-    for (const [rId, recipe] of Object.entries(COOKING_RECIPES)) {
-        if (rId === 'failed_dish') continue;
-        const ingKeys = Object.keys(recipe.ingredients);
-        if (ingKeys.length === Object.keys(countMap).length) {
-            const match = ingKeys.every(k => recipe.ingredients[k] === countMap[k]);
-            if (match) { matchedRecipeId = rId; break; }
-        }
-    }
-
-    if (matchedRecipeId) {
-        const recipe = COOKING_RECIPES[matchedRecipeId];
-        const foodKey = `food_${matchedRecipeId}`;
-        ctx.S.bag[foodKey] = (ctx.S.bag[foodKey] || 0) + 1;
-
-        if (!ctx.S.cooking.unlockedRecipes.includes(matchedRecipeId)) {
-            ctx.S.cooking.unlockedRecipes.push(matchedRecipeId);
-            toast(`🌟 KỲ TÍCH! Khám phá được công thức mới: ${recipe.name}!`);
-        }
-        processChefExp(recipe.cookTime * 15, `Sáng tạo ${recipe.name}`);
-    } else {
-        const foodKey = `food_failed_dish`;
-        ctx.S.bag[foodKey] = (ctx.S.bag[foodKey] || 0) + 1;
-        toast(`💩 Nấu hỏng rồi! Thức Ăn Dị Dạng đã ra lò...`);
-        processChefExp(5, 'Thức Ăn Dị Dạng');
-    }
+    toast(`🍳 Đã nấu thành công món ${recipe.name}! Mùi thơm nức mũi!`);
     save(); All.renderStatus(); openKitchenModal();
 }
 
@@ -521,8 +428,6 @@ export function eatDish(foodKey) {
             atkVal: buff.atkVal, hpVal: buff.hpVal, desc: buff.desc, expiresAt
         });
         toast(`😋 Măm măm! Đã nhận Buff: ${buff.desc}`);
-    } else {
-        toast(`🤢 Ọe... Mùi vị thật tồi tệ! May mà chưa đi bệnh viện.`);
     }
     save(); All.renderStatus(); openKitchenModal();
 }
@@ -538,11 +443,9 @@ function injectKitchenCSS() {
     const style = document.createElement('style');
     style.id = 'kitchen-styles';
     style.textContent = `
-    .k-header { display:flex; justify-content:space-between; align-items:center; background:#f4e6cf; border:2px solid #ddc39a; padding:10px 14px; border-radius:8px; margin-bottom:12px; }
-    .k-chef { font-weight:bold; font-size:14px; color:#c86a1a; display:flex; align-items:center; gap:6px; }
-    .k-exp { font-size:11px; color:#a3763d; font-weight:bold; background:#fffdf4; padding:2px 8px; border-radius:10px; border:1px solid #d9c49a; }
+    .k-header { display:flex; justify-content:center; align-items:center; background:#f4e6cf; border:2px solid #ddc39a; padding:10px 14px; border-radius:8px; margin-bottom:12px; }
+    .k-chef { font-weight:bold; font-size:15px; color:#c86a1a; display:flex; align-items:center; gap:6px; text-transform:uppercase; letter-spacing:1px; }
     .k-grid { display:grid; grid-template-columns:1fr; gap:8px; max-height: 400px; overflow-y: auto; padding-right: 4px; }
-    .k-pot { background:#fffdf4; border:2px inset #c9a273; border-radius:8px; padding:12px; margin-bottom:12px; min-height:60px; }
     .k-ing-tag { color:#2e7d32; font-weight:bold; margin-right:8px; font-size:11px; display:inline-block; margin-top:2px; background:#e8f5e9; padding:2px 6px; border-radius:4px; border:1px solid #c8e6c9;}
     .k-ing-tag.miss { color:#d32f2f; background:#ffebee; border-color:#ffcdd2;}
   `;
@@ -554,18 +457,14 @@ export function openKitchenModal() {
     initCookingState();
     injectKitchenCSS();
 
-    const cooking = ctx.S.cooking;
     const activeBuffs = getActiveCookingBuffs();
-    const isMaxLevel = cooking.chefLevel >= 10 || cooking.chefExp === 'MAX';
 
     const headerHtml = `
     <div class="k-header">
-      <div class="k-chef">${All.spriteSVG('kitchenIcon', 24)} Đầu Bếp: Lv.${cooking.chefLevel} ${isMaxLevel ? '(MAX)' : ''}</div>
-      <div class="k-exp">EXP: ${isMaxLevel ? 'MAX' : `${cooking.chefExp} / ${cooking.chefLevel * 100}`}</div>
+      <div class="k-chef">${All.spriteSVG('kitchenIcon', 24)} Bếp Trưởng: ${ctx.S.username || 'Bạn'}</div>
     </div>
     <div class="tabs" style="justify-content:center;">
       <span class="tab ${activeKitchenTab === 'recipes' ? 'active' : ''}" id="tab-cook-recipes">Sách Món</span>
-      <span class="tab ${activeKitchenTab === 'fusion' ? 'active' : ''}" id="tab-cook-fusion">Sáng Tạo</span>
       <span class="tab ${activeKitchenTab === 'fridge' ? 'active' : ''}" id="tab-cook-fridge">Tủ Lạnh</span>
       <span class="tab ${activeKitchenTab === 'buffs' ? 'active' : ''}" id="tab-cook-buffs">Buff (${activeBuffs.length})</span>
     </div>
@@ -576,9 +475,6 @@ export function openKitchenModal() {
     if (activeKitchenTab === 'recipes') {
         let recipeRows = '';
         for (const [rId, recipe] of Object.entries(COOKING_RECIPES)) {
-            if (rId === 'failed_dish') continue;
-            const isUnlocked = cooking.unlockedRecipes.includes(rId);
-            const isLevelMet = cooking.chefLevel >= recipe.reqLevel;
             const hasIngredients = canCookRecipe(rId);
 
             let ingHtml = '';
@@ -588,61 +484,33 @@ export function openKitchenModal() {
                 ingHtml += `<span class="k-ing-tag ${haveAmt >= reqAmt ? '' : 'miss'}">${cropDef.name}: ${haveAmt}/${reqAmt}</span>`;
             }
 
-            const icon = isUnlocked ? All.spriteSVG(`food_${rId}`, 36) : `<div style="font-size:24px; color:#aaa; text-align:center;">?</div>`;
-            const nameStr = isUnlocked ? recipe.name : `Hương Vị Bí Ẩn (Cần Lv.${recipe.reqLevel})`;
-            const descStr = isUnlocked ? recipe.desc : `Nấu nướng ngẫu nhiên để khám phá công thức này!`;
-
             recipeRows += `
-        <div class="item" style="opacity: ${isLevelMet ? 1 : 0.6};">
-          <div class="icon" style="background:#fffdf4;">${icon}</div>
+        <div class="item">
+          <div class="icon" style="background:#fffdf4;">${All.spriteSVG(`food_${rId}`, 36)}</div>
           <div class="info">
-            <div class="name">${nameStr}</div>
-            <div class="meta">${descStr}</div>
-            ${isUnlocked ? `<div>${ingHtml}</div>` : ''}
+            <div class="name">${recipe.name}</div>
+            <div class="meta">${recipe.desc}</div>
+            <div>${ingHtml}</div>
           </div>
           <div class="acts">
-            ${isUnlocked ? `<span class="buy ${hasIngredients ? '' : 'off'}" data-cook="${rId}">Nấu</span>` : `<span class="buy off">Khóa</span>`}
+            <span class="buy ${hasIngredients ? '' : 'off'}" ${hasIngredients ? `data-cook="${rId}"` : ''}>Nấu</span>
           </div>
         </div>
       `;
         }
         bodyHtml = `<div class="k-grid">${recipeRows}</div>`;
 
-    } else if (activeKitchenTab === 'fusion') {
-        let bagCrops = '';
-        for (const [bKey, amt] of Object.entries(ctx.S.bag)) {
-            if (amt > 0 && CROPS[bKey] && !bKey.startsWith('food_')) {
-                bagCrops += `<span class="pick" data-add-ing="${bKey}">${CROPS[bKey].name} (x${amt})</span>`;
-            }
-        }
-
-        bodyHtml = `
-      <div class="note" style="margin-bottom:10px;">Thả tối đa 4 loại củ quả vào nồi. Có thể phát minh ra món mới đó!</div>
-      <div class="k-pot">
-        <div style="font-size:12px; font-weight:bold; color:#7a5c38; margin-bottom:6px;">Đang ở trong nồi:</div>
-        <div id="fusion-pot" style="display:flex; gap:8px; flex-wrap:wrap;">
-          <span style="color:#aaa; font-size:11px; font-style:italic;">(Trống)</span>
-        </div>
-      </div>
-      <div style="font-size:12px; font-weight:bold; color:#7a5c38; margin-bottom:6px;">Kho nguyên liệu:</div>
-      <div class="picker" style="max-height:120px; overflow-y:auto;">
-        ${bagCrops || '<div style="color:#aaa; font-size:12px;">Đã hết rau củ rồi! Về vườn thu hoạch thôi.</div>'}
-      </div>
-      <div style="margin-top:14px; text-align:center;">
-        <span class="buy" id="btn-start-fusion" style="padding:8px 24px; font-size:13px;">🔥 Bật Lửa Nấu!</span>
-      </div>
-    `;
-
     } else if (activeKitchenTab === 'fridge') {
         let fridgeRows = '';
         const foodKeys = Object.keys(ctx.S.bag).filter(k => k.startsWith('food_'));
 
         if (foodKeys.length === 0) {
-            fridgeRows = `<div class="note">Tủ lạnh đang trống. Hãy sang Sách Công Thức để nấu ăn ngay thôi!</div>`;
+            fridgeRows = `<div class="note">Tủ lạnh đang trống. Hãy chuyển sang mục Sách Món để nấu ăn ngay thôi!</div>`;
         } else {
             fridgeRows = foodKeys.map(k => {
                 const dishId = k.replace('food_', '');
-                const recipe = COOKING_RECIPES[dishId] || COOKING_RECIPES.failed_dish;
+                const recipe = COOKING_RECIPES[dishId];
+                if (!recipe) return '';
                 const amt = ctx.S.bag[k];
                 return `
           <div class="item">
@@ -692,7 +560,6 @@ export function openKitchenModal() {
     // Gắn Sự kiện Tabs
     const getEl = (id) => All.$id(id);
     getEl('tab-cook-recipes')?.addEventListener('click', () => { activeKitchenTab = 'recipes'; openKitchenModal(); });
-    getEl('tab-cook-fusion')?.addEventListener('click', () => { activeKitchenTab = 'fusion'; openKitchenModal(); });
     getEl('tab-cook-fridge')?.addEventListener('click', () => { activeKitchenTab = 'fridge'; openKitchenModal(); });
     getEl('tab-cook-buffs')?.addEventListener('click', () => { activeKitchenTab = 'buffs'; openKitchenModal(); });
 
@@ -706,32 +573,10 @@ export function openKitchenModal() {
             btn.addEventListener('click', (e) => eatDish(/** @type {HTMLElement} */(e.currentTarget).dataset.eat));
         });
     }
-
-    // Gắn Xử lý Fusion
-    const fusionSelected = [];
-    const potEl = getEl('fusion-pot');
-    if (mbody && potEl) {
-        mbody.querySelectorAll('[data-add-ing]').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const target = /** @type {HTMLElement} */(e.currentTarget);
-                const ingId = target.dataset.addIng;
-                if (fusionSelected.length >= 4) return toast('Nồi đầy rồi (tối đa 4 củ)!');
-                fusionSelected.push(ingId);
-                potEl.innerHTML = fusionSelected.map((id, idx) => `<span class="pick active" data-remove-fusion="${idx}">${CROPS[id]?.name || id} ✕</span>`).join('');
-                potEl.querySelectorAll('[data-remove-fusion]').forEach(remBtn => {
-                    remBtn.addEventListener('click', (re) => {
-                        fusionSelected.splice(parseInt(/** @type {HTMLElement} */(re.currentTarget).dataset.removeFusion), 1);
-            /** @type {HTMLElement} */(re.currentTarget).remove();
-                    });
-                });
-            });
-        });
-    }
-    getEl('btn-start-fusion')?.addEventListener('click', () => cookFreeFusion(fusionSelected));
 }
 
 // ============================================================================
-// 7. TIÊM NHÀ BẾP TỰ ĐỘNG VÀO NÔNG TRẠI
+// 7. TIÊM NHÀ BẾP TỰ ĐỘNG VÀO NÔNG TRẠI (BỎ KHÁM PHÁ THEO YÊU CẦU)
 // ============================================================================
 export function injectCookingButton() {
     patchGameMechanics();
@@ -750,7 +595,7 @@ export function injectCookingButton() {
     }
 }
 
-// Kích hoạt tiêm an toàn
+// Chạy an toàn khi import
 if (typeof window !== 'undefined') {
     patchGameMechanics();
     const tryInject = () => { initCookingState(); injectCookingButton(); };

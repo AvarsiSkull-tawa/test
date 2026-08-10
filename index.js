@@ -48953,6 +48953,37 @@ function openKitchenModal() {
     cookFreeFusion(fusionSelected);
   });
 }
+function injectCookingButton() {
+  const shadowRoot = document.querySelector("#star-tavern-farm-root")?.shadowRoot;
+  if (!shadowRoot) return;
+  const bottombar = shadowRoot.querySelector(".bottombar");
+  if (bottombar && !shadowRoot.querySelector('[data-open="cooking"]')) {
+    const btn = document.createElement("div");
+    btn.className = "btn";
+    btn.dataset.open = "cooking";
+    btn.innerHTML = `${dishSVG("kitchenIcon", 22)}N\u1EA5u \u0103n`;
+    btn.addEventListener("click", () => openKitchenModal());
+    const cfgBtn = bottombar.querySelector('[data-open="cfg"]');
+    if (cfgBtn) {
+      bottombar.insertBefore(btn, cfgBtn);
+    } else {
+      bottombar.appendChild(btn);
+    }
+  }
+  const expBlocks = shadowRoot.querySelector("#explore-blocks");
+  if (expBlocks && !shadowRoot.querySelector("#eslot-cooking")) {
+    const expSlot = document.createElement("div");
+    expSlot.className = "explore-slot";
+    expSlot.id = "eslot-cooking";
+    expSlot.style.cssText = "background: rgba(220, 100, 50, 0.8); border-color: #ff8a65; box-shadow: 0 4px 0 #d84315, inset 0 0 0 3px rgba(255,138,101,0.4);";
+    expSlot.innerHTML = `
+      ${dishSVG("kitchenIcon", 48)}
+      <div class="feature-name" style="color: #fff8e1; text-shadow: 0 1px 2px #000;">Nh\xE0 B\u1EBFp</div>
+    `;
+    expSlot.addEventListener("click", () => openKitchenModal());
+    expBlocks.appendChild(expSlot);
+  }
+}
 var COOKING_P, COOKING_SPRITES, COOKING_RECIPES, activeKitchenTab;
 var init_cooking = __esm({
   "src/cooking.js"() {
@@ -49010,6 +49041,25 @@ var init_cooking = __esm({
       // Nồi đất / Nồi gang
     };
     COOKING_SPRITES = {
+      // 🍳 SPRITE NÚT BẤM THANH CÔNG CỤ (NỒI NẤU BỐC KHÓI 16x16)
+      kitchenIcon: [
+        "................",
+        "......ww........",
+        ".....w..w.......",
+        "......ww........",
+        "....kkMMkk......",
+        "...kMMMMMMk.....",
+        "..kMMMMMMMMk....",
+        "..kMooooooMk....",
+        "..kMoOOOOoMk....",
+        "..kMoOOOOoMk....",
+        "..kMooooooMk....",
+        "..kMMMMMMMMk....",
+        "...kMMMMMMk.....",
+        "....kkKKkk......",
+        ".....k..k.......",
+        "................"
+      ],
       // 🥗 Salad Cherry Tươi (16x16)
       salad_cherry: [
         "................",
@@ -49110,7 +49160,7 @@ var init_cooking = __esm({
         "...sSoOoRRRRRRoOoSs.....",
         "..sSWsOoRRRRRRoOoSWs....",
         "..sSssOoRRRRRRoOosSs....",
-        "...sSoOoRRwwRRoOoSs.....",
+        "...sSoOoRRRRRRoOoSs.....",
         "....oOoRRRRRRoOo........",
         ".....oOoRRRRRoOo........",
         "......oOooRRooOo........",
@@ -49133,7 +49183,7 @@ var init_cooking = __esm({
         "....FfVVVVVVVVffF.......",
         "...FfVVYYVVYYVVffF......",
         "..FfVVYWWVYWWVVVffF.....",
-        "..FfVVVYYVVYYVVVffF.....",
+        "..FfVVVVYYVVYYVVVffF....",
         "..FfVVGGVVpPVVVVffF.....",
         "..FfVVGGVpPPPVVVffF.....",
         "..FfVVVVVVpPVVVVffF.....",
@@ -49148,7 +49198,7 @@ var init_cooking = __esm({
         "........................",
         "........................"
       ],
-      // 🍡 Chè Bưởi Củ Năng (16x16)
+      // 🍡 Chè Củ Năng Ánh Tuyết (16x16)
       sweet_soup: [
         "................",
         "......ffff......",
@@ -49179,7 +49229,6 @@ var init_cooking = __esm({
         "....vVVvvVVv....",
         "...vVvVVVVvVv...",
         "..vVVvVVVVvvVv..",
-        "..vVVVVVVVVVVv..",
         "..vvvvvvvvvvvv..",
         "...SSSSSSSSSS...",
         "................",
@@ -49278,6 +49327,27 @@ var init_cooking = __esm({
       }
     };
     activeKitchenTab = "recipes";
+    if (typeof window !== "undefined") {
+      const tryInject = () => {
+        initCookingState();
+        injectCookingButton();
+      };
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", tryInject);
+      } else {
+        setTimeout(tryInject, 500);
+        setTimeout(tryInject, 1500);
+      }
+      const observer = new MutationObserver(() => {
+        injectCookingButton();
+      });
+      setTimeout(() => {
+        const shadowRoot = document.querySelector("#star-tavern-farm-root")?.shadowRoot;
+        if (shadowRoot) {
+          observer.observe(shadowRoot, { childList: true, subtree: true });
+        }
+      }, 1e3);
+    }
   }
 });
 
@@ -49399,6 +49469,7 @@ __export(all_exports, {
   initUI: () => initUI,
   initWindows: () => initWindows,
   initWitch: () => initWitch,
+  injectCookingButton: () => injectCookingButton,
   isDungeonOpen: () => isDungeonOpen,
   isRain: () => isRain,
   lastScene: () => lastScene,

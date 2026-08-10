@@ -6,9 +6,6 @@ import { toast } from './witch.js';
 import { renderStatus } from './render.js';
 import { openModal } from './shop.js';
 
-// ============================================================================
-// 1. BẢNG MÀU ẨM THỰC CHUYÊN DỤNG (CULINARY PIXEL PALETTE)
-// ============================================================================
 export const COOKING_P = {
     '.': null,
     'K': '#231815', 'k': '#3a2923',
@@ -28,9 +25,6 @@ export const COOKING_P = {
     'A': '#ffd94d', 'a': '#ffb300',
 };
 
-// ============================================================================
-// 2. MA TRẬN SPRITE PIXEL DÀNH RIÊNG CHO MÓN ĂN & NÚT BẤM
-// ============================================================================
 export const COOKING_SPRITES = {
     kitchenIcon: [
         "................", "......ww........", ".....w..w.......", "......ww........",
@@ -121,12 +115,15 @@ export const COOKING_SPRITES = {
         "...fVVYyYyVVf...", "..fVYyWwWwYyVf..", ".fVYywwPpwwYyVf.", ".fVYywwPPwwYyVf.",
         ".fVYyWwWwWwYyVf.", ".fVVYyYyYyYyVVf.", "..fVVVVVVVVVVf..", "...ffffffffff...",
         "....FFFFFFFF....", ".....kkkkkk.....", "......k..k......", "................"
+    ],
+    failed_dish: [
+        "................", ".......ww.......", "......w..w......", ".......vv.......",
+        "......vvvv......", ".....vVvVvv.....", "....vVvVVvVv....", "....vVVvvVVv....",
+        "...vVvVVVVvVv...", "..vVVvVVVVvvVv..", "..vvvvvvvvvvvv..", "...SSSSSSSSSS...",
+        "................", "................", "................", "................"
     ]
 };
 
-// ============================================================================
-// 3. RECIPES & DISH DATABASE (Tất cả được MỞ KHÓA TỪ ĐẦU)
-// ============================================================================
 export const COOKING_RECIPES = {
     salad_cherry: {
         name: 'Salad Cherry Tươi', sellPrice: 150,
@@ -142,7 +139,7 @@ export const COOKING_RECIPES = {
     },
     radish_soup: {
         name: 'Canh Củ Cải Rong Tảo', sellPrice: 200,
-        desc: 'Thanh lọc cơ thể. Tăng 10% Tốc đánh (SPD) cho Pet trong 30 phút.',
+        desc: 'Thanh lọc cơ thể. Tăng 10% Tốc đánh (SPD) cho Pet trong Thám Hiểm.',
         ingredients: { radish: 2, chuncai: 2 },
         buff: { type: 'hero_speed', val: 0.1, durationMs: 30 * 60 * 1000, desc: 'Pet +10% Tốc đánh' }
     },
@@ -154,7 +151,7 @@ export const COOKING_RECIPES = {
     },
     candied_strawberry: {
         name: 'Kẹo Hồ Lô Dâu Tây', sellPrice: 850,
-        desc: 'Ngọt lịm tim. Tăng 15% Tỉ lệ Chí Mạng (Crit Rate) cho Pet trong 30 phút.',
+        desc: 'Ngọt lịm tim. Tăng 15% Tỉ lệ Chí Mạng (Crit Rate) cho Pet trong Thám Hiểm.',
         ingredients: { strawberry: 1, douya: 1 },
         buff: { type: 'hero_crit', val: 0.15, durationMs: 30 * 60 * 1000, desc: 'Pet +15% Tỉ lệ Crit' }
     },
@@ -166,7 +163,7 @@ export const COOKING_RECIPES = {
     },
     stir_fry_jiaobai: {
         name: 'Củ Niễng Xào Dòn', sellPrice: 1300,
-        desc: 'Cực kỳ tốn cơm. Buff x1.5 Máu tối đa (Max HP) cho Pet trong 1 giờ.',
+        desc: 'Cực kỳ tốn cơm. Buff x1.5 Máu tối đa (Max HP) cho Pet trong Thám Hiểm.',
         ingredients: { jiaobai: 2, chuncai: 1 },
         buff: { type: 'hero_hp', val: 0.5, durationMs: 60 * 60 * 1000, desc: 'Pet +50% Max HP' }
     },
@@ -184,19 +181,19 @@ export const COOKING_RECIPES = {
     },
     candy_flower: {
         name: 'Hoa Kẹo Mút Bảo Thạch', sellPrice: 4000,
-        desc: 'Đẹp đến mức không nỡ ăn. Cộng thêm 20% Né Tránh cho tất cả Pet ở Hầm ngục.',
+        desc: 'Đẹp đến mức không nỡ ăn. Cộng thêm 20% Né Tránh cho tất cả Pet ở Thám Hiểm.',
         ingredients: { gemflower: 1, moonberry: 1 },
         buff: { type: 'hero_dodge', val: 0.2, durationMs: 2 * 60 * 60 * 1000, desc: 'Pet +20% Tỉ lệ Né Tránh' }
     },
     opal_tea: {
         name: 'Trà Dây Leo Opal', sellPrice: 2500,
-        desc: 'Nước trà xanh ngọc bích, uống vào nhẹ bẫng. Tăng X2 Tốc độ di chuyển cho Pet.',
+        desc: 'Nước trà xanh ngọc bích, uống vào nhẹ bẫng. Tăng X2 Tốc độ di chuyển cho Pet ở Thám Hiểm.',
         ingredients: { opalvine: 1, wujing: 1 },
         buff: { type: 'hero_speed', val: 1.0, durationMs: 60 * 60 * 1000, desc: 'Pet X2 Tốc đánh (SPD)' }
     },
     pie_pumpkin: {
         name: 'Bánh Bí Ngô Ánh Trăng', sellPrice: 3000,
-        desc: 'Thơm lừng mùi bơ sữa. Buff máu (HP) và Sát thương (ATK) của Pet lên 20%!',
+        desc: 'Thơm lừng mùi bơ sữa. Buff máu (HP) và Sát thương (ATK) của Pet lên 20% ở Thám Hiểm!',
         ingredients: { pumpkin: 2, moonberry: 2 },
         buff: { type: 'hero_stats_boost', atkVal: 1.2, hpVal: 1.2, durationMs: 2 * 60 * 60 * 1000, desc: 'Pet +20% ATK & +20% HP' }
     },
@@ -214,9 +211,6 @@ export const COOKING_RECIPES = {
     }
 };
 
-// ============================================================================
-// 4. DAEMON WORKER & EVENT INTERCEPTOR (AN TOÀN HƠN)
-// ============================================================================
 let _cookingPatched = false;
 let _sellEventAttached = false;
 
@@ -224,7 +218,6 @@ function patchGameMechanics() {
     if (_cookingPatched) return;
     _cookingPatched = true;
 
-    // 1. Ánh xạ Bảng Màu Bí Mật vào All.GACHA_P
     let charCode = 200;
     const charMap = {};
     for (const [key, hexColor] of Object.entries(COOKING_P)) {
@@ -234,7 +227,6 @@ function patchGameMechanics() {
         All.GACHA_P[newChar] = hexColor;
     }
 
-    // 2. Đăng ký Sprite Động
     for (const [dishId, matrix] of Object.entries(COOKING_SPRITES)) {
         const mappedMatrix = matrix.map(row => {
             let newRow = '';
@@ -245,21 +237,36 @@ function patchGameMechanics() {
         All.registerDynamicSprite(spriteKey, mappedMatrix);
     }
 
-    // 3. Tiêm danh mục Món ăn vào CSDL Nông Sản
-    for (const [id, recipe] of Object.entries(COOKING_RECIPES)) {
+    const allFoods = Object.keys(COOKING_RECIPES);
+    allFoods.push('failed_dish');
+
+    const failedDef = {
+        name: 'Thức Ăn Dị Dạng', sellPrice: 5,
+        desc: 'Hỗn hợp bốc khói đen do nấu sai công thức. Chỉ có thể đem phi tang...',
+        ingredients: {},
+        buff: { type: 'none', val: 0, durationMs: 0, desc: 'Chỉ khiến bạn đau bụng thôi!' }
+    };
+
+    for (const id of allFoods) {
         const foodKey = `food_${id}`;
+        const recipe = COOKING_RECIPES[id] || failedDef;
         if (!CROPS[foodKey]) {
-            CROPS[foodKey] = { name: recipe.name, desc: recipe.desc, sell: recipe.sellPrice, sp: foodKey };
+            Object.defineProperty(CROPS, foodKey, {
+                value: { name: recipe.name, desc: recipe.desc, sell: recipe.sellPrice, sp: foodKey },
+                enumerable: false,
+                writable: true,
+                configurable: true
+            });
         }
     }
 
-    // 4. DAEMON: Vòng lặp Áp dụng Buff cho Cây trồng & Hầm ngục
     setInterval(() => {
         const buffs = getActiveCookingBuffs();
         if (buffs.length === 0) return;
 
         // A. Xử lý Mọc cây nhanh 
         const speedBuffs = buffs.filter(b => b.type === 'crop_speed');
+        let buffedPlots = 0;
         if (speedBuffs.length > 0 && ctx.S && ctx.S.plots) {
             [1, 2, 3].forEach(pg => {
                 const plots = pg === 2 ? ctx.S.plots2 : pg === 3 ? ctx.S.plots3 : ctx.S.plots;
@@ -267,22 +274,32 @@ function patchGameMechanics() {
                 const validBuff = speedBuffs.find(b => b.zone === pg || b.zone === 0);
                 if (!validBuff) return;
 
-                plots.forEach(p => {
+                plots.forEach((p, pi) => {
                     const c = p.crop;
                     if (c && !c._cookSpeedApplied) {
                         const left = c.matureAt - now();
                         if (left > 0) {
                             c.matureAt = now() + Math.floor(left * validBuff.val);
                             c._cookSpeedApplied = true;
+                            if (pg === ctx.S.page && All.plotEmote) {
+                                All.plotEmote(pi, 'emStar');
+                            }
+                            buffedPlots++;
                         }
                     }
                 });
             });
+            if (buffedPlots > 0) {
+                All.save();
+                All.renderPlots();
+                toast(`✨ Ẩm Thực: Đã tăng tốc sinh trưởng cho ${buffedPlots} cây trồng!`);
+            }
         }
 
-        // B. Xử lý Buff Hero Mode
+        // B. Xử lý duy trì ICON Nồi Súp lơ lửng trên đầu Pet
         if (All.runState && All.runState.pets) {
-            All.runState.pets.forEach(p => {
+            const shadowRoot = document.querySelector('#star-tavern-farm-root')?.shadowRoot;
+            All.runState.pets.forEach((p, i) => {
                 if (!p._cookBuffApplied) {
                     let hpM = 1, atkM = 1, spdM = 1, addCrit = 0, addDodge = 0;
                     buffs.forEach(b => {
@@ -299,11 +316,9 @@ function patchGameMechanics() {
                     if (spdM !== 1) { p.maxCd = p.maxCd / spdM; p.cd = p.maxCd; }
                     if (addCrit > 0) { p.crit += addCrit; }
                     if (addDodge > 0) { p.dodge += addDodge; }
-
                     p._cookBuffApplied = true;
 
-                    const shadowRoot = document.querySelector('#star-tavern-farm-root')?.shadowRoot;
-                    const pEl = shadowRoot?.querySelector('#hpet-' + All.runState.pets.indexOf(p));
+                    const pEl = /** @type {HTMLElement} */ (shadowRoot?.querySelector('#hpet-' + i));
                     if (pEl) {
                         const fl = document.createElement('div');
                         fl.className = 'dmg-float buff';
@@ -316,11 +331,21 @@ function patchGameMechanics() {
                         setTimeout(() => fl.remove(), 1000);
                     }
                 }
+
+                const pEl = /** @type {HTMLElement} */ (shadowRoot?.querySelector('#hpet-' + i));
+                if (pEl && !pEl.dataset.cookAura) {
+                    pEl.dataset.cookAura = '1';
+                    pEl.style.filter = (pEl.style.filter || '') + ' drop-shadow(0 0 6px #ff88dd)';
+                    const icon = document.createElement('div');
+                    icon.innerHTML = '🍲';
+                    icon.style.cssText = 'position:absolute; top:-25px; left:50%; transform:translateX(-50%); font-size:16px; z-index:20; filter:drop-shadow(0 2px 2px #000); animation: petbob 1.8s infinite; pointer-events:none;';
+                    pEl.appendChild(icon);
+                }
             });
         }
     }, 1000);
 
-    // 5. EVENT INTERCEPTOR: Bắt sự kiện Bán bằng JS chuẩn
+    // 5. EVENT INTERCEPTOR
     const shadowRoot = document.querySelector('#star-tavern-farm-root')?.shadowRoot;
     if (shadowRoot && !_sellEventAttached) {
         _sellEventAttached = true;
@@ -347,9 +372,6 @@ function patchGameMechanics() {
     }
 }
 
-// ============================================================================
-// 5. HÀM QUẢN LÝ NẤU ĂN VÀ TRẠNG THÁI (ĐÃ LƯỢC BỎ LEVEL & FUSION)
-// ============================================================================
 export function initCookingState() {
     if (!ctx.S.cooking) {
         ctx.S.cooking = { activeBuffs: [] };
@@ -405,7 +427,7 @@ export function eatDish(foodKey) {
     if (buff.type === 'pet_heal') {
         if (All.runState && All.runState.pets) {
             All.runState.pets.forEach(p => { if (p.hp > 0) p.hp = Math.min(p.maxHp, p.hp + p.maxHp * buff.val); });
-            toast(`💚 Đã hồi ${buff.val * 100}% HP cho toàn đội Pet!`);
+            toast(`💚 Đã hồi ${buff.val * 100}% HP cho toàn đội Pet ở Thám Hiểm!`);
         } else {
             toast(`💚 Món ăn quá bổ dưỡng! Thể lực căng tràn.`);
         }
@@ -432,9 +454,6 @@ export function eatDish(foodKey) {
     save(); All.renderStatus(); openKitchenModal();
 }
 
-// ============================================================================
-// 6. GIAO DIỆN CỬA SỔ NHÀ BẾP (KITCHEN UI MODAL)
-// ============================================================================
 let activeKitchenTab = 'recipes';
 
 function injectKitchenCSS() {
@@ -509,8 +528,8 @@ export function openKitchenModal() {
         } else {
             fridgeRows = foodKeys.map(k => {
                 const dishId = k.replace('food_', '');
-                const recipe = COOKING_RECIPES[dishId];
-                if (!recipe) return '';
+                // An toàn tránh lỗi crash nếu dish không còn trong sách món
+                const recipe = COOKING_RECIPES[dishId] || COOKING_RECIPES.failed_dish || { name: 'Món ăn lạ', desc: '' };
                 const amt = ctx.S.bag[k];
                 return `
           <div class="item">
@@ -557,13 +576,11 @@ export function openKitchenModal() {
 
     openModal('Nhà Bếp Nông Trại 🍳', headerHtml + bodyHtml);
 
-    // Gắn Sự kiện Tabs
     const getEl = (id) => All.$id(id);
     getEl('tab-cook-recipes')?.addEventListener('click', () => { activeKitchenTab = 'recipes'; openKitchenModal(); });
     getEl('tab-cook-fridge')?.addEventListener('click', () => { activeKitchenTab = 'fridge'; openKitchenModal(); });
     getEl('tab-cook-buffs')?.addEventListener('click', () => { activeKitchenTab = 'buffs'; openKitchenModal(); });
 
-    // Gắn Sự Kiện Nút Nấu & Ăn
     const mbody = getEl('mbody');
     if (mbody) {
         mbody.querySelectorAll('[data-cook]').forEach(btn => {
@@ -575,9 +592,6 @@ export function openKitchenModal() {
     }
 }
 
-// ============================================================================
-// 7. TIÊM NHÀ BẾP TỰ ĐỘNG VÀO NÔNG TRẠI (BỎ KHÁM PHÁ THEO YÊU CẦU)
-// ============================================================================
 export function injectCookingButton() {
     patchGameMechanics();
     const shadowRoot = document.querySelector('#star-tavern-farm-root')?.shadowRoot;
@@ -595,7 +609,6 @@ export function injectCookingButton() {
     }
 }
 
-// Chạy an toàn khi import
 if (typeof window !== 'undefined') {
     patchGameMechanics();
     const tryInject = () => { initCookingState(); injectCookingButton(); };

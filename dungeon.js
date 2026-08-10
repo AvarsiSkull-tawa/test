@@ -579,7 +579,7 @@ function _doStartWave() {
                     p._cookBuffApplied = true;
                 }
 
-                // Hiệu ứng hình ảnh (Bắn chữ YUMMY & Vòng sáng nồi súp) - Chạy mỗi màn để đẹp mắt!
+                // Hiệu ứng hình ảnh (Bắn chữ YUMMY)
                 setTimeout(() => {
                     if (p.el) {
                         const fl = document.createElement('div');
@@ -593,13 +593,10 @@ function _doStartWave() {
                         All.$id('dg-arena').appendChild(fl);
                         setTimeout(() => fl.remove(), 1200);
 
+                        // Ánh sáng Glow Vĩnh viễn (Đã tháo cái Nồi phiền phức)
                         if (!p.el.dataset.cookAura) {
                             p.el.dataset.cookAura = '1';
-                            p.el.style.filter = (p.el.style.filter || '') + ' drop-shadow(0 0 6px #ff88dd)';
-                            const icon = document.createElement('div');
-                            icon.innerHTML = '🍲';
-                            icon.style.cssText = 'position:absolute; top:-25px; left:50%; transform:translateX(-50%); font-size:16px; z-index:20; filter:drop-shadow(0 2px 2px #000); animation: dgHop 1s infinite; pointer-events:none;';
-                            p.el.appendChild(icon);
+                            p.el.style.filter = 'drop-shadow(0 0 5px #ff88dd)';
                         }
                     }
                 }, 400);

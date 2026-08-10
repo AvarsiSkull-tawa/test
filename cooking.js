@@ -127,87 +127,87 @@ export const COOKING_SPRITES = {
 export const COOKING_RECIPES = {
     salad_cherry: {
         name: 'Salad Cherry Tươi', sellPrice: 150,
-        desc: 'Giòn ngọt thanh mát. Giảm 20% thời gian mọc cây khi gieo hạt ở Đồng Cỏ (Tác dụng 1 giờ).',
+        desc: 'Giòn ngọt thanh mát. Giảm 10% thời gian mọc cây ở Đồng Cỏ (Tác dụng 15 phút).',
         ingredients: { radish: 2, douya: 2 },
-        buff: { type: 'crop_speed', zone: 1, val: 0.8, durationMs: 60 * 60 * 1000, desc: 'Giảm 20% thời gian mọc cây ở Đồng cỏ' }
+        buff: { type: 'crop_speed', zone: 1, val: 0.9, durationMs: 15 * 60 * 1000, desc: 'Mọc nhanh +10% (Đồng cỏ)' }
     },
     spring_rolls: {
         name: 'Chả Giò Giá Đỗ', sellPrice: 130,
-        desc: 'Vỏ giòn rụm, nhân thơm lừng. Hồi lập tức 20% Máu cho toàn đội Pet.',
+        desc: 'Vỏ giòn rụm, nhân thơm lừng. Hồi lập tức 15% Máu cho toàn đội Pet.',
         ingredients: { douya: 4 },
-        buff: { type: 'pet_heal', val: 0.2, durationMs: 0, desc: 'Hồi ngay 20% Max HP cho Pet' }
+        buff: { type: 'pet_heal', val: 0.15, durationMs: 0, desc: 'Hồi ngay 15% Max HP' }
     },
     radish_soup: {
         name: 'Canh Củ Cải Rong Tảo', sellPrice: 200,
-        desc: 'Thanh lọc cơ thể. Tăng 10% Tốc đánh (SPD) cho Pet trong Thám Hiểm.',
+        desc: 'Thanh lọc cơ thể. Tăng 10% Tốc đánh (SPD) cho Pet trong 15 phút.',
         ingredients: { radish: 2, chuncai: 2 },
-        buff: { type: 'hero_speed', val: 0.1, durationMs: 30 * 60 * 1000, desc: 'Pet +10% Tốc đánh' }
+        buff: { type: 'hero_speed', val: 0.1, durationMs: 15 * 60 * 1000, desc: 'Pet +10% Tốc đánh' }
     },
     soup_tomato: {
         name: 'Súp Cà Chua Bồng Bềnh', sellPrice: 220,
-        desc: 'Bát súp chua ngọt bốc khói. Hồi lập tức 50% Máu cho toàn đội Pet.',
+        desc: 'Bát súp chua ngọt bốc khói. Hồi lập tức 30% Máu cho toàn đội Pet.',
         ingredients: { tomato: 3, douya: 1 },
-        buff: { type: 'pet_heal', val: 0.5, durationMs: 0, desc: 'Hồi ngay 50% Max HP cho Pet' }
+        buff: { type: 'pet_heal', val: 0.3, durationMs: 0, desc: 'Hồi ngay 30% Max HP' }
     },
     candied_strawberry: {
         name: 'Kẹo Hồ Lô Dâu Tây', sellPrice: 850,
-        desc: 'Ngọt lịm tim. Tăng 15% Tỉ lệ Chí Mạng (Crit Rate) cho Pet trong Thám Hiểm.',
+        desc: 'Ngọt lịm tim. Tăng 8% Tỉ lệ Chí Mạng (Crit Rate) cho Pet trong 15 phút.',
         ingredients: { strawberry: 1, douya: 1 },
-        buff: { type: 'hero_crit', val: 0.15, durationMs: 30 * 60 * 1000, desc: 'Pet +15% Tỉ lệ Crit' }
+        buff: { type: 'hero_crit', val: 0.08, durationMs: 15 * 60 * 1000, desc: 'Pet +8% Tỉ lệ Crit' }
     },
     sweet_soup: {
         name: 'Chè Củ Năng Củ Ấu', sellPrice: 800,
-        desc: 'Giải nhiệt xua tan mệt mỏi. Giảm 25% thời gian mọc cây ở Vùng Nước.',
+        desc: 'Giải nhiệt xua tan mệt mỏi. Giảm 15% thời gian mọc cây ở Vùng Nước trong 20 phút.',
         ingredients: { biqi: 2, lingjiao: 1 },
-        buff: { type: 'crop_speed', zone: 2, val: 0.75, durationMs: 60 * 60 * 1000, desc: 'Rau mọc nhanh +25% (Vùng nước)' }
+        buff: { type: 'crop_speed', zone: 2, val: 0.85, durationMs: 20 * 60 * 1000, desc: 'Mọc nhanh +15% (Vùng nước)' }
     },
     stir_fry_jiaobai: {
         name: 'Củ Niễng Xào Dòn', sellPrice: 1300,
-        desc: 'Cực kỳ tốn cơm. Buff x1.5 Máu tối đa (Max HP) cho Pet trong Thám Hiểm.',
+        desc: 'Cực kỳ tốn cơm. Buff x1.15 Máu tối đa (Max HP) cho Pet trong 20 phút.',
         ingredients: { jiaobai: 2, chuncai: 1 },
-        buff: { type: 'hero_hp', val: 0.5, durationMs: 60 * 60 * 1000, desc: 'Pet +50% Max HP' }
+        buff: { type: 'hero_hp', val: 0.15, durationMs: 20 * 60 * 1000, desc: 'Pet +15% Max HP' }
     },
     hotpot_lotus: {
         name: 'Lẩu Củ Sen Đầm Lầy', sellPrice: 3500,
-        desc: 'Nồi lẩu đậm đà thơm nức. Thưởng thêm 30% lợi nhuận khi Bán bất kỳ món gì trong túi!',
+        desc: 'Nồi lẩu đậm đà thơm nức. Thưởng thêm 15% lợi nhuận khi Bán bất kỳ món gì trong 30 phút!',
         ingredients: { lianou: 1, biqi: 2, lingjiao: 2 },
-        buff: { type: 'sell_price_boost', val: 1.30, durationMs: 2 * 60 * 60 * 1000, desc: 'Nhận thêm 30% Vàng khi Bán đồ' }
+        buff: { type: 'sell_price_boost', val: 1.15, durationMs: 30 * 60 * 1000, desc: 'Nhận thêm 15% Vàng khi Bán đồ' }
     },
     glow_soup: {
         name: 'Súp Tinh Thạch', sellPrice: 1600,
-        desc: 'Phát sáng lấp lánh trong đêm. Giảm 30% thời gian mọc cây ở Khu Mỏ.',
+        desc: 'Phát sáng lấp lánh trong đêm. Giảm 15% thời gian mọc cây ở Khu Mỏ trong 20 phút.',
         ingredients: { wujing: 2, starbush: 1 },
-        buff: { type: 'crop_speed', zone: 3, val: 0.7, durationMs: 60 * 60 * 1000, desc: 'Rau mọc nhanh +30% (Khu mỏ)' }
+        buff: { type: 'crop_speed', zone: 3, val: 0.85, durationMs: 20 * 60 * 1000, desc: 'Mọc nhanh +15% (Khu mỏ)' }
     },
     candy_flower: {
         name: 'Hoa Kẹo Mút Bảo Thạch', sellPrice: 4000,
-        desc: 'Đẹp đến mức không nỡ ăn. Cộng thêm 20% Né Tránh cho tất cả Pet ở Thám Hiểm.',
+        desc: 'Đẹp đến mức không nỡ ăn. Cộng thêm 8% Né Tránh cho tất cả Pet ở Hầm ngục trong 30 phút.',
         ingredients: { gemflower: 1, moonberry: 1 },
-        buff: { type: 'hero_dodge', val: 0.2, durationMs: 2 * 60 * 60 * 1000, desc: 'Pet +20% Tỉ lệ Né Tránh' }
+        buff: { type: 'hero_dodge', val: 0.08, durationMs: 30 * 60 * 1000, desc: 'Pet +8% Tỉ lệ Né Tránh' }
     },
     opal_tea: {
         name: 'Trà Dây Leo Opal', sellPrice: 2500,
-        desc: 'Nước trà xanh ngọc bích, uống vào nhẹ bẫng. Tăng X2 Tốc độ di chuyển cho Pet ở Thám Hiểm.',
+        desc: 'Nước trà xanh ngọc bích, uống vào nhẹ bẫng. Tăng 20% Tốc độ di chuyển cho Pet trong 30 phút.',
         ingredients: { opalvine: 1, wujing: 1 },
-        buff: { type: 'hero_speed', val: 1.0, durationMs: 60 * 60 * 1000, desc: 'Pet X2 Tốc đánh (SPD)' }
+        buff: { type: 'hero_speed', val: 0.2, durationMs: 30 * 60 * 1000, desc: 'Pet +20% Tốc đánh (SPD)' }
     },
     pie_pumpkin: {
         name: 'Bánh Bí Ngô Ánh Trăng', sellPrice: 3000,
-        desc: 'Thơm lừng mùi bơ sữa. Buff máu (HP) và Sát thương (ATK) của Pet lên 20% ở Thám Hiểm!',
+        desc: 'Thơm lừng mùi bơ sữa. Buff máu (HP) và Sát thương (ATK) của Pet lên 10% trong 30 phút!',
         ingredients: { pumpkin: 2, moonberry: 2 },
-        buff: { type: 'hero_stats_boost', atkVal: 1.2, hpVal: 1.2, durationMs: 2 * 60 * 60 * 1000, desc: 'Pet +20% ATK & +20% HP' }
+        buff: { type: 'hero_stats_boost', atkVal: 1.1, hpVal: 1.1, durationMs: 30 * 60 * 1000, desc: 'Pet +10% ATK & +10% HP' }
     },
     dragon_ribs: {
         name: 'Sườn Rồng Sốt Long Tinh', sellPrice: 12000,
-        desc: 'Món ăn vương giả tràn đầy sức mạnh. Tăng +100% ATK cho toàn đội Pet trong Thám Hiểm!',
+        desc: 'Món ăn vương giả. Tăng +30% ATK cho toàn đội Pet trong Thám Hiểm (Tác dụng 45 phút)!',
         ingredients: { dragoncry: 1, starbush: 2, tomato: 2 },
-        buff: { type: 'hero_atk', val: 1.0, durationMs: 3 * 60 * 60 * 1000, desc: 'Pet X2 Sức mạnh Bạo Tàn (ATK)' }
+        buff: { type: 'hero_atk', val: 0.3, durationMs: 45 * 60 * 1000, desc: 'Pet +30% Sát thương (ATK)' }
     },
     mutant_ramen: {
         name: 'Ramen Linh Khí Tiên Thiên', sellPrice: 6000,
         desc: 'Bát ramen bốc linh khí. Lấy vào Takeout, bạn và bạn Chat sẽ cảm thấy hưng phấn tột độ.',
         ingredients: { wujing: 2, chuncai: 1, douya: 2 },
-        buff: { type: 'rp_story_boost', val: 1, durationMs: 4 * 60 * 60 * 1000, desc: 'Buff tâm trạng tích cực cho Roleplay' }
+        buff: { type: 'rp_story_boost', val: 1, durationMs: 60 * 60 * 1000, desc: 'Buff tâm trạng vui vẻ RP (60 phút)' }
     }
 };
 
@@ -264,7 +264,6 @@ function patchGameMechanics() {
         const buffs = getActiveCookingBuffs();
         if (buffs.length === 0) return;
 
-        // A. Xử lý Mọc cây nhanh 
         const speedBuffs = buffs.filter(b => b.type === 'crop_speed');
         let buffedPlots = 0;
         if (speedBuffs.length > 0 && ctx.S && ctx.S.plots) {
@@ -292,11 +291,10 @@ function patchGameMechanics() {
             if (buffedPlots > 0) {
                 All.save();
                 All.renderPlots();
-                toast(`✨ Ẩm Thực: Đã tăng tốc sinh trưởng cho ${buffedPlots} cây trồng!`);
+                toast(`✨ Đã tăng tốc sinh trưởng cho ${buffedPlots} luống rau!`);
             }
         }
 
-        // B. Xử lý duy trì ICON Nồi Súp lơ lửng trên đầu Pet
         if (All.runState && All.runState.pets) {
             const shadowRoot = document.querySelector('#star-tavern-farm-root')?.shadowRoot;
             All.runState.pets.forEach((p, i) => {
@@ -335,17 +333,12 @@ function patchGameMechanics() {
                 const pEl = /** @type {HTMLElement} */ (shadowRoot?.querySelector('#hpet-' + i));
                 if (pEl && !pEl.dataset.cookAura) {
                     pEl.dataset.cookAura = '1';
-                    pEl.style.filter = (pEl.style.filter || '') + ' drop-shadow(0 0 6px #ff88dd)';
-                    const icon = document.createElement('div');
-                    icon.innerHTML = '🍲';
-                    icon.style.cssText = 'position:absolute; top:-25px; left:50%; transform:translateX(-50%); font-size:16px; z-index:20; filter:drop-shadow(0 2px 2px #000); animation: petbob 1.8s infinite; pointer-events:none;';
-                    pEl.appendChild(icon);
+                    pEl.style.filter = 'drop-shadow(0 0 5px #ff88dd)';
                 }
             });
         }
     }, 1000);
 
-    // 5. EVENT INTERCEPTOR
     const shadowRoot = document.querySelector('#star-tavern-farm-root')?.shadowRoot;
     if (shadowRoot && !_sellEventAttached) {
         _sellEventAttached = true;
@@ -363,7 +356,7 @@ function patchGameMechanics() {
                             ctx.S.coins += bonus;
                             All.save();
                             All.renderStatus();
-                            toast(`🍲 Gia Vị Bí Truyền: Nhận thêm +${bonus.toLocaleString()} G!`);
+                            toast(`🍲 Gia Vị Bí Truyền: Thu lời thêm +${bonus.toLocaleString()} G!`);
                         }
                     }, 50);
                 }
@@ -427,7 +420,7 @@ export function eatDish(foodKey) {
     if (buff.type === 'pet_heal') {
         if (All.runState && All.runState.pets) {
             All.runState.pets.forEach(p => { if (p.hp > 0) p.hp = Math.min(p.maxHp, p.hp + p.maxHp * buff.val); });
-            toast(`💚 Đã hồi ${buff.val * 100}% HP cho toàn đội Pet ở Thám Hiểm!`);
+            toast(`💚 Đã hồi ${buff.val * 100}% HP cho toàn đội Pet!`);
         } else {
             toast(`💚 Món ăn quá bổ dưỡng! Thể lực căng tràn.`);
         }
@@ -528,8 +521,8 @@ export function openKitchenModal() {
         } else {
             fridgeRows = foodKeys.map(k => {
                 const dishId = k.replace('food_', '');
-                // An toàn tránh lỗi crash nếu dish không còn trong sách món
-                const recipe = COOKING_RECIPES[dishId] || COOKING_RECIPES.failed_dish || { name: 'Món ăn lạ', desc: '' };
+                const recipe = COOKING_RECIPES[dishId];
+                if (!recipe) return '';
                 const amt = ctx.S.bag[k];
                 return `
           <div class="item">

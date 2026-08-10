@@ -10190,11 +10190,7 @@ function _doStartWave() {
             setTimeout(() => fl.remove(), 1200);
             if (!p2.el.dataset.cookAura) {
               p2.el.dataset.cookAura = "1";
-              p2.el.style.filter = (p2.el.style.filter || "") + " drop-shadow(0 0 6px #ff88dd)";
-              const icon = document.createElement("div");
-              icon.innerHTML = "\u{1F372}";
-              icon.style.cssText = "position:absolute; top:-25px; left:50%; transform:translateX(-50%); font-size:16px; z-index:20; filter:drop-shadow(0 2px 2px #000); animation: dgHop 1s infinite; pointer-events:none;";
-              p2.el.appendChild(icon);
+              p2.el.style.filter = "drop-shadow(0 0 5px #ff88dd)";
             }
           }
         }, 400);
@@ -48755,7 +48751,7 @@ function patchGameMechanics() {
       if (buffedPlots > 0) {
         save();
         renderPlots();
-        toast(`\u2728 \u1EA8m Th\u1EF1c: \u0110\xE3 t\u0103ng t\u1ED1c sinh tr\u01B0\u1EDFng cho ${buffedPlots} c\xE2y tr\u1ED3ng!`);
+        toast(`\u2728 \u0110\xE3 t\u0103ng t\u1ED1c sinh tr\u01B0\u1EDFng cho ${buffedPlots} lu\u1ED1ng rau!`);
       }
     }
     if (runState && runState.pets) {
@@ -48814,11 +48810,7 @@ function patchGameMechanics() {
         );
         if (pEl && !pEl.dataset.cookAura) {
           pEl.dataset.cookAura = "1";
-          pEl.style.filter = (pEl.style.filter || "") + " drop-shadow(0 0 6px #ff88dd)";
-          const icon = document.createElement("div");
-          icon.innerHTML = "\u{1F372}";
-          icon.style.cssText = "position:absolute; top:-25px; left:50%; transform:translateX(-50%); font-size:16px; z-index:20; filter:drop-shadow(0 2px 2px #000); animation: petbob 1.8s infinite; pointer-events:none;";
-          pEl.appendChild(icon);
+          pEl.style.filter = "drop-shadow(0 0 5px #ff88dd)";
         }
       });
     }
@@ -48843,7 +48835,7 @@ function patchGameMechanics() {
               ctx.S.coins += bonus;
               save();
               renderStatus();
-              toast(`\u{1F372} Gia V\u1ECB B\xED Truy\u1EC1n: Nh\u1EADn th\xEAm +${bonus.toLocaleString()} G!`);
+              toast(`\u{1F372} Gia V\u1ECB B\xED Truy\u1EC1n: Thu l\u1EDDi th\xEAm +${bonus.toLocaleString()} G!`);
             }
           }, 50);
         }
@@ -48901,7 +48893,7 @@ function eatDish(foodKey) {
       runState.pets.forEach((p2) => {
         if (p2.hp > 0) p2.hp = Math.min(p2.maxHp, p2.hp + p2.maxHp * buff.val);
       });
-      toast(`\u{1F49A} \u0110\xE3 h\u1ED3i ${buff.val * 100}% HP cho to\xE0n \u0111\u1ED9i Pet \u1EDF Th\xE1m Hi\u1EC3m!`);
+      toast(`\u{1F49A} \u0110\xE3 h\u1ED3i ${buff.val * 100}% HP cho to\xE0n \u0111\u1ED9i Pet!`);
     } else {
       toast(`\u{1F49A} M\xF3n \u0103n qu\xE1 b\u1ED5 d\u01B0\u1EE1ng! Th\u1EC3 l\u1EF1c c\u0103ng tr\xE0n.`);
     }
@@ -48999,7 +48991,8 @@ function openKitchenModal() {
     } else {
       fridgeRows = foodKeys.map((k2) => {
         const dishId = k2.replace("food_", "");
-        const recipe = COOKING_RECIPES[dishId] || COOKING_RECIPES.failed_dish || { name: "M\xF3n \u0103n l\u1EA1", desc: "" };
+        const recipe = COOKING_RECIPES[dishId];
+        if (!recipe) return "";
         const amt = ctx.S.bag[k2];
         return `
           <div class="item">
@@ -49424,100 +49417,100 @@ var init_cooking = __esm({
       salad_cherry: {
         name: "Salad Cherry T\u01B0\u01A1i",
         sellPrice: 150,
-        desc: "Gi\xF2n ng\u1ECDt thanh m\xE1t. Gi\u1EA3m 20% th\u1EDDi gian m\u1ECDc c\xE2y khi gieo h\u1EA1t \u1EDF \u0110\u1ED3ng C\u1ECF (T\xE1c d\u1EE5ng 1 gi\u1EDD).",
+        desc: "Gi\xF2n ng\u1ECDt thanh m\xE1t. Gi\u1EA3m 10% th\u1EDDi gian m\u1ECDc c\xE2y \u1EDF \u0110\u1ED3ng C\u1ECF (T\xE1c d\u1EE5ng 15 ph\xFAt).",
         ingredients: { radish: 2, douya: 2 },
-        buff: { type: "crop_speed", zone: 1, val: 0.8, durationMs: 60 * 60 * 1e3, desc: "Gi\u1EA3m 20% th\u1EDDi gian m\u1ECDc c\xE2y \u1EDF \u0110\u1ED3ng c\u1ECF" }
+        buff: { type: "crop_speed", zone: 1, val: 0.9, durationMs: 15 * 60 * 1e3, desc: "M\u1ECDc nhanh +10% (\u0110\u1ED3ng c\u1ECF)" }
       },
       spring_rolls: {
         name: "Ch\u1EA3 Gi\xF2 Gi\xE1 \u0110\u1ED7",
         sellPrice: 130,
-        desc: "V\u1ECF gi\xF2n r\u1EE5m, nh\xE2n th\u01A1m l\u1EEBng. H\u1ED3i l\u1EADp t\u1EE9c 20% M\xE1u cho to\xE0n \u0111\u1ED9i Pet.",
+        desc: "V\u1ECF gi\xF2n r\u1EE5m, nh\xE2n th\u01A1m l\u1EEBng. H\u1ED3i l\u1EADp t\u1EE9c 15% M\xE1u cho to\xE0n \u0111\u1ED9i Pet.",
         ingredients: { douya: 4 },
-        buff: { type: "pet_heal", val: 0.2, durationMs: 0, desc: "H\u1ED3i ngay 20% Max HP cho Pet" }
+        buff: { type: "pet_heal", val: 0.15, durationMs: 0, desc: "H\u1ED3i ngay 15% Max HP" }
       },
       radish_soup: {
         name: "Canh C\u1EE7 C\u1EA3i Rong T\u1EA3o",
         sellPrice: 200,
-        desc: "Thanh l\u1ECDc c\u01A1 th\u1EC3. T\u0103ng 10% T\u1ED1c \u0111\xE1nh (SPD) cho Pet trong Th\xE1m Hi\u1EC3m.",
+        desc: "Thanh l\u1ECDc c\u01A1 th\u1EC3. T\u0103ng 10% T\u1ED1c \u0111\xE1nh (SPD) cho Pet trong 15 ph\xFAt.",
         ingredients: { radish: 2, chuncai: 2 },
-        buff: { type: "hero_speed", val: 0.1, durationMs: 30 * 60 * 1e3, desc: "Pet +10% T\u1ED1c \u0111\xE1nh" }
+        buff: { type: "hero_speed", val: 0.1, durationMs: 15 * 60 * 1e3, desc: "Pet +10% T\u1ED1c \u0111\xE1nh" }
       },
       soup_tomato: {
         name: "S\xFAp C\xE0 Chua B\u1ED3ng B\u1EC1nh",
         sellPrice: 220,
-        desc: "B\xE1t s\xFAp chua ng\u1ECDt b\u1ED1c kh\xF3i. H\u1ED3i l\u1EADp t\u1EE9c 50% M\xE1u cho to\xE0n \u0111\u1ED9i Pet.",
+        desc: "B\xE1t s\xFAp chua ng\u1ECDt b\u1ED1c kh\xF3i. H\u1ED3i l\u1EADp t\u1EE9c 30% M\xE1u cho to\xE0n \u0111\u1ED9i Pet.",
         ingredients: { tomato: 3, douya: 1 },
-        buff: { type: "pet_heal", val: 0.5, durationMs: 0, desc: "H\u1ED3i ngay 50% Max HP cho Pet" }
+        buff: { type: "pet_heal", val: 0.3, durationMs: 0, desc: "H\u1ED3i ngay 30% Max HP" }
       },
       candied_strawberry: {
         name: "K\u1EB9o H\u1ED3 L\xF4 D\xE2u T\xE2y",
         sellPrice: 850,
-        desc: "Ng\u1ECDt l\u1ECBm tim. T\u0103ng 15% T\u1EC9 l\u1EC7 Ch\xED M\u1EA1ng (Crit Rate) cho Pet trong Th\xE1m Hi\u1EC3m.",
+        desc: "Ng\u1ECDt l\u1ECBm tim. T\u0103ng 8% T\u1EC9 l\u1EC7 Ch\xED M\u1EA1ng (Crit Rate) cho Pet trong 15 ph\xFAt.",
         ingredients: { strawberry: 1, douya: 1 },
-        buff: { type: "hero_crit", val: 0.15, durationMs: 30 * 60 * 1e3, desc: "Pet +15% T\u1EC9 l\u1EC7 Crit" }
+        buff: { type: "hero_crit", val: 0.08, durationMs: 15 * 60 * 1e3, desc: "Pet +8% T\u1EC9 l\u1EC7 Crit" }
       },
       sweet_soup: {
         name: "Ch\xE8 C\u1EE7 N\u0103ng C\u1EE7 \u1EA4u",
         sellPrice: 800,
-        desc: "Gi\u1EA3i nhi\u1EC7t xua tan m\u1EC7t m\u1ECFi. Gi\u1EA3m 25% th\u1EDDi gian m\u1ECDc c\xE2y \u1EDF V\xF9ng N\u01B0\u1EDBc.",
+        desc: "Gi\u1EA3i nhi\u1EC7t xua tan m\u1EC7t m\u1ECFi. Gi\u1EA3m 15% th\u1EDDi gian m\u1ECDc c\xE2y \u1EDF V\xF9ng N\u01B0\u1EDBc trong 20 ph\xFAt.",
         ingredients: { biqi: 2, lingjiao: 1 },
-        buff: { type: "crop_speed", zone: 2, val: 0.75, durationMs: 60 * 60 * 1e3, desc: "Rau m\u1ECDc nhanh +25% (V\xF9ng n\u01B0\u1EDBc)" }
+        buff: { type: "crop_speed", zone: 2, val: 0.85, durationMs: 20 * 60 * 1e3, desc: "M\u1ECDc nhanh +15% (V\xF9ng n\u01B0\u1EDBc)" }
       },
       stir_fry_jiaobai: {
         name: "C\u1EE7 Ni\u1EC5ng X\xE0o D\xF2n",
         sellPrice: 1300,
-        desc: "C\u1EF1c k\u1EF3 t\u1ED1n c\u01A1m. Buff x1.5 M\xE1u t\u1ED1i \u0111a (Max HP) cho Pet trong Th\xE1m Hi\u1EC3m.",
+        desc: "C\u1EF1c k\u1EF3 t\u1ED1n c\u01A1m. Buff x1.15 M\xE1u t\u1ED1i \u0111a (Max HP) cho Pet trong 20 ph\xFAt.",
         ingredients: { jiaobai: 2, chuncai: 1 },
-        buff: { type: "hero_hp", val: 0.5, durationMs: 60 * 60 * 1e3, desc: "Pet +50% Max HP" }
+        buff: { type: "hero_hp", val: 0.15, durationMs: 20 * 60 * 1e3, desc: "Pet +15% Max HP" }
       },
       hotpot_lotus: {
         name: "L\u1EA9u C\u1EE7 Sen \u0110\u1EA7m L\u1EA7y",
         sellPrice: 3500,
-        desc: "N\u1ED3i l\u1EA9u \u0111\u1EADm \u0111\xE0 th\u01A1m n\u1EE9c. Th\u01B0\u1EDFng th\xEAm 30% l\u1EE3i nhu\u1EADn khi B\xE1n b\u1EA5t k\u1EF3 m\xF3n g\xEC trong t\xFAi!",
+        desc: "N\u1ED3i l\u1EA9u \u0111\u1EADm \u0111\xE0 th\u01A1m n\u1EE9c. Th\u01B0\u1EDFng th\xEAm 15% l\u1EE3i nhu\u1EADn khi B\xE1n b\u1EA5t k\u1EF3 m\xF3n g\xEC trong 30 ph\xFAt!",
         ingredients: { lianou: 1, biqi: 2, lingjiao: 2 },
-        buff: { type: "sell_price_boost", val: 1.3, durationMs: 2 * 60 * 60 * 1e3, desc: "Nh\u1EADn th\xEAm 30% V\xE0ng khi B\xE1n \u0111\u1ED3" }
+        buff: { type: "sell_price_boost", val: 1.15, durationMs: 30 * 60 * 1e3, desc: "Nh\u1EADn th\xEAm 15% V\xE0ng khi B\xE1n \u0111\u1ED3" }
       },
       glow_soup: {
         name: "S\xFAp Tinh Th\u1EA1ch",
         sellPrice: 1600,
-        desc: "Ph\xE1t s\xE1ng l\u1EA5p l\xE1nh trong \u0111\xEAm. Gi\u1EA3m 30% th\u1EDDi gian m\u1ECDc c\xE2y \u1EDF Khu M\u1ECF.",
+        desc: "Ph\xE1t s\xE1ng l\u1EA5p l\xE1nh trong \u0111\xEAm. Gi\u1EA3m 15% th\u1EDDi gian m\u1ECDc c\xE2y \u1EDF Khu M\u1ECF trong 20 ph\xFAt.",
         ingredients: { wujing: 2, starbush: 1 },
-        buff: { type: "crop_speed", zone: 3, val: 0.7, durationMs: 60 * 60 * 1e3, desc: "Rau m\u1ECDc nhanh +30% (Khu m\u1ECF)" }
+        buff: { type: "crop_speed", zone: 3, val: 0.85, durationMs: 20 * 60 * 1e3, desc: "M\u1ECDc nhanh +15% (Khu m\u1ECF)" }
       },
       candy_flower: {
         name: "Hoa K\u1EB9o M\xFAt B\u1EA3o Th\u1EA1ch",
         sellPrice: 4e3,
-        desc: "\u0110\u1EB9p \u0111\u1EBFn m\u1EE9c kh\xF4ng n\u1EE1 \u0103n. C\u1ED9ng th\xEAm 20% N\xE9 Tr\xE1nh cho t\u1EA5t c\u1EA3 Pet \u1EDF Th\xE1m Hi\u1EC3m.",
+        desc: "\u0110\u1EB9p \u0111\u1EBFn m\u1EE9c kh\xF4ng n\u1EE1 \u0103n. C\u1ED9ng th\xEAm 8% N\xE9 Tr\xE1nh cho t\u1EA5t c\u1EA3 Pet \u1EDF H\u1EA7m ng\u1EE5c trong 30 ph\xFAt.",
         ingredients: { gemflower: 1, moonberry: 1 },
-        buff: { type: "hero_dodge", val: 0.2, durationMs: 2 * 60 * 60 * 1e3, desc: "Pet +20% T\u1EC9 l\u1EC7 N\xE9 Tr\xE1nh" }
+        buff: { type: "hero_dodge", val: 0.08, durationMs: 30 * 60 * 1e3, desc: "Pet +8% T\u1EC9 l\u1EC7 N\xE9 Tr\xE1nh" }
       },
       opal_tea: {
         name: "Tr\xE0 D\xE2y Leo Opal",
         sellPrice: 2500,
-        desc: "N\u01B0\u1EDBc tr\xE0 xanh ng\u1ECDc b\xEDch, u\u1ED1ng v\xE0o nh\u1EB9 b\u1EABng. T\u0103ng X2 T\u1ED1c \u0111\u1ED9 di chuy\u1EC3n cho Pet \u1EDF Th\xE1m Hi\u1EC3m.",
+        desc: "N\u01B0\u1EDBc tr\xE0 xanh ng\u1ECDc b\xEDch, u\u1ED1ng v\xE0o nh\u1EB9 b\u1EABng. T\u0103ng 20% T\u1ED1c \u0111\u1ED9 di chuy\u1EC3n cho Pet trong 30 ph\xFAt.",
         ingredients: { opalvine: 1, wujing: 1 },
-        buff: { type: "hero_speed", val: 1, durationMs: 60 * 60 * 1e3, desc: "Pet X2 T\u1ED1c \u0111\xE1nh (SPD)" }
+        buff: { type: "hero_speed", val: 0.2, durationMs: 30 * 60 * 1e3, desc: "Pet +20% T\u1ED1c \u0111\xE1nh (SPD)" }
       },
       pie_pumpkin: {
         name: "B\xE1nh B\xED Ng\xF4 \xC1nh Tr\u0103ng",
         sellPrice: 3e3,
-        desc: "Th\u01A1m l\u1EEBng m\xF9i b\u01A1 s\u1EEFa. Buff m\xE1u (HP) v\xE0 S\xE1t th\u01B0\u01A1ng (ATK) c\u1EE7a Pet l\xEAn 20% \u1EDF Th\xE1m Hi\u1EC3m!",
+        desc: "Th\u01A1m l\u1EEBng m\xF9i b\u01A1 s\u1EEFa. Buff m\xE1u (HP) v\xE0 S\xE1t th\u01B0\u01A1ng (ATK) c\u1EE7a Pet l\xEAn 10% trong 30 ph\xFAt!",
         ingredients: { pumpkin: 2, moonberry: 2 },
-        buff: { type: "hero_stats_boost", atkVal: 1.2, hpVal: 1.2, durationMs: 2 * 60 * 60 * 1e3, desc: "Pet +20% ATK & +20% HP" }
+        buff: { type: "hero_stats_boost", atkVal: 1.1, hpVal: 1.1, durationMs: 30 * 60 * 1e3, desc: "Pet +10% ATK & +10% HP" }
       },
       dragon_ribs: {
         name: "S\u01B0\u1EDDn R\u1ED3ng S\u1ED1t Long Tinh",
         sellPrice: 12e3,
-        desc: "M\xF3n \u0103n v\u01B0\u01A1ng gi\u1EA3 tr\xE0n \u0111\u1EA7y s\u1EE9c m\u1EA1nh. T\u0103ng +100% ATK cho to\xE0n \u0111\u1ED9i Pet trong Th\xE1m Hi\u1EC3m!",
+        desc: "M\xF3n \u0103n v\u01B0\u01A1ng gi\u1EA3. T\u0103ng +30% ATK cho to\xE0n \u0111\u1ED9i Pet trong Th\xE1m Hi\u1EC3m (T\xE1c d\u1EE5ng 45 ph\xFAt)!",
         ingredients: { dragoncry: 1, starbush: 2, tomato: 2 },
-        buff: { type: "hero_atk", val: 1, durationMs: 3 * 60 * 60 * 1e3, desc: "Pet X2 S\u1EE9c m\u1EA1nh B\u1EA1o T\xE0n (ATK)" }
+        buff: { type: "hero_atk", val: 0.3, durationMs: 45 * 60 * 1e3, desc: "Pet +30% S\xE1t th\u01B0\u01A1ng (ATK)" }
       },
       mutant_ramen: {
         name: "Ramen Linh Kh\xED Ti\xEAn Thi\xEAn",
         sellPrice: 6e3,
         desc: "B\xE1t ramen b\u1ED1c linh kh\xED. L\u1EA5y v\xE0o Takeout, b\u1EA1n v\xE0 b\u1EA1n Chat s\u1EBD c\u1EA3m th\u1EA5y h\u01B0ng ph\u1EA5n t\u1ED9t \u0111\u1ED9.",
         ingredients: { wujing: 2, chuncai: 1, douya: 2 },
-        buff: { type: "rp_story_boost", val: 1, durationMs: 4 * 60 * 60 * 1e3, desc: "Buff t\xE2m tr\u1EA1ng t\xEDch c\u1EF1c cho Roleplay" }
+        buff: { type: "rp_story_boost", val: 1, durationMs: 60 * 60 * 1e3, desc: "Buff t\xE2m tr\u1EA1ng vui v\u1EBB RP (60 ph\xFAt)" }
       }
     };
     _cookingPatched = false;
